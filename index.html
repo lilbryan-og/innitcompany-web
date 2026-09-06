@@ -48,6 +48,9 @@ body{
   radial-gradient(ellipse at 45% 60%, rgba(207,232,255,0.5), transparent 60%),
   linear-gradient(200deg, #04070a 0%, #0f2233 45%, #274257 80%, #4d7590 100%);
 }
+#bg-salas{background:
+  radial-gradient(circle at 50% 40%, #4a4640 0%, #2a2724 45%, #100f0d 80%, #030302 100%);
+}
 .grain{
   position:fixed;inset:0;z-index:1;pointer-events:none;
   opacity:0.18;mix-blend-mode:overlay;
@@ -70,7 +73,104 @@ body{
 }
 .access-btn:hover{background:linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.22) 60%, rgba(255,255,255,0.1) 100%);}
 .access-btn.active{background:var(--ink);color:#0c0b0f;}
+
+/* tarjetas de sala */
+.room-card{
+  position:relative;width:100%;aspect-ratio:16/10;border-radius:10px;overflow:hidden;
+  margin-bottom:10px;background-size:cover;background-position:center;
+  border:1px solid var(--hairline);
+}
+.room-name{
+  position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);
+  padding:4px 9px;border-radius:5px;font-family:'Geist Mono',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:0.05em;color:var(--ink);
+}
+.room-info-btn{
+  position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);
+  border:none;padding:4px 10px;border-radius:5px;font-family:'Geist Mono',monospace;font-size:10px;
+  color:var(--ink);text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;
+}
+.room-info-btn:hover{background:var(--ink);color:#0c0b0f;}
+.room-desc{
+  position:absolute;inset:0;background:rgba(8,7,10,0.86);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;
+  font-size:12.5px;line-height:1.5;opacity:0;pointer-events:none;transition:opacity 0.25s var(--ease);
+}
+.room-desc.open{opacity:1;pointer-events:auto;}
+
+/* botón flotante que sigue al cursor */
+.home-close-btn{
+  position:absolute;top:14px;right:14px;z-index:5;
+  width:26px;height:26px;border-radius:4px;
+  background:linear-gradient(180deg, rgba(230,48,48,0.95) 0%, rgba(195,28,28,0.92) 100%);
+  border:1px solid rgba(255,255,255,0.25);
+  backdrop-filter:blur(24px) saturate(185%);
+  -webkit-backdrop-filter:blur(24px) saturate(185%);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;cursor:pointer;
+  transition:transform 0.3s var(--ease), background 0.3s var(--ease), box-shadow 0.3s var(--ease), color 0.3s var(--ease);
+}
+.home-close-btn:hover{
+  transform:scale(1.18) rotate(90deg);
+  background:linear-gradient(180deg, rgba(255,70,70,1) 0%, rgba(220,20,20,0.96) 100%);
+  box-shadow:0 0 16px rgba(255,60,60,0.6);
+  color:#fff;
+}
+
+/* ============================================
+   SALAS — página aparte, estética propia (clara),
+   deliberadamente distinta al resto del sitio
+   ============================================ */
+.salas-page{
+  position:fixed;inset:0;z-index:50;background:#eeece7;color:#141414;
+  overflow-y:auto;opacity:0;pointer-events:none;transition:opacity 0.4s var(--ease);
+  font-family:'Inter',sans-serif;
+}
+.salas-page.open{opacity:1;pointer-events:auto;}
+.salas-top{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:28px 32px;position:sticky;top:0;background:#eeece7;z-index:2;
+}
+.salas-brand{font-family:'Geist Mono',monospace;font-size:11px;line-height:1.6;text-transform:uppercase;letter-spacing:0.04em;}
+.salas-back{
+  background:none;border:1px solid #14141433;color:#141414;border-radius:999px;
+  padding:7px 16px;font-family:'Geist Mono',monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:0.05em;cursor:pointer;
+}
+.salas-back:hover{background:#141414;color:#eeece7;}
+.salas-body{padding:0 32px 60px;max-width:1400px;margin:0 auto;}
+.salas-floor-label{
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;color:#14141488;
+  margin:36px 0 14px;text-transform:uppercase;
+}
+.salas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media (max-width:900px){ .salas-grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:600px){ .salas-grid{grid-template-columns:1fr;} }
+
+.salas-card{
+  position:relative;aspect-ratio:4/5;border-radius:2px;overflow:hidden;
+  background-size:cover;background-position:center;
+}
+.salas-card-name{
+  position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,0.85);color:#141414;
+  padding:5px 10px;font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:0.05em;border-radius:2px;
+}
+.salas-card-info{
+  position:absolute;right:12px;bottom:12px;background:#141414;color:#eeece7;border:none;
+  padding:5px 12px;font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:0.05em;border-radius:2px;cursor:pointer;
+}
+.salas-card-info:hover{background:#000;}
+.salas-card-desc{
+  position:absolute;inset:0;background:rgba(238,236,231,0.96);color:#141414;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;
+  font-family:'Inter',sans-serif;font-size:13px;line-height:1.55;
+  opacity:0;pointer-events:none;transition:opacity 0.25s ease;
+}
+.salas-card-desc.open{opacity:1;pointer-events:auto;}
 .panel{
+  position:relative;
   width:440px;max-width:100%;
   background:linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.16) 60%, rgba(255,255,255,0.08) 100%);
   border:1px solid var(--panel-border);
@@ -126,6 +226,8 @@ body{
 .month-title{font-size:13px;font-weight:600;text-transform:capitalize;}
 .month-arrows button{background:none;border:1px solid var(--hairline);color:var(--ink);width:22px;height:22px;border-radius:5px;cursor:pointer;font-size:12px;line-height:1;}
 .month-arrows button:hover{border-color:var(--ink);}
+.month-arrows button:disabled{opacity:0.25;cursor:not-allowed;}
+.month-arrows button:disabled:hover{border-color:rgba(255,255,255,0.08);}
 
 .cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px;}
 .cal-head div{font-size:8.5px;color:var(--ink-dim);text-align:center;text-transform:uppercase;}
@@ -234,6 +336,7 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 <div class="bg-layer" id="bg-work"></div>
 <div class="bg-layer" id="bg-about"></div>
 <div class="bg-layer" id="bg-call"></div>
+<div class="bg-layer" id="bg-salas"></div>
 <div class="bg-hover" id="bg-hover"></div>
 <div class="cut-overlay" id="cut-overlay"></div>
 <svg class="grain" width="100%" height="100%">
@@ -243,10 +346,12 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 
 <div class="stage">
   <div class="panel" id="panel">
+    <button class="home-close-btn" id="home-close-btn" aria-label="???" title="">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 4l16 16M20 4L4 20"/></svg>
+    </button>
 
     <div class="panel-header">
       <div class="logo display">INNIT COMPANY</div>
-      <div class="tagline mono">DE LA IDEA AL LANZAMIENTO — SIN VUELTAS, CON CRITERIO.</div>
     </div>
 
     <div class="nav">
@@ -321,6 +426,20 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
   </button>
 </div>
 
+<!-- SALAS — página propia, a pantalla completa, estética distinta al resto -->
+<div class="salas-page" id="salas-page">
+  <div class="salas-top">
+    <div class="salas-brand">INNIT COMPANY<br>SALAS</div>
+    <button class="salas-back" id="salas-back">VOLVER</button>
+  </div>
+  <div class="salas-body">
+    <div class="salas-floor-label">PLANTA 0</div>
+    <div class="salas-grid" id="salas-grid-p0"></div>
+    <div class="salas-floor-label">PLANTA -1</div>
+    <div class="salas-grid" id="salas-grid-p1"></div>
+  </div>
+</div>
+
 <div id="admin-mount"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -366,11 +485,42 @@ function goTo(tab){
     bgs.forEach(b=>b.classList.toggle('active', b.id === 'bg-'+tab));
     bgHover.classList.remove('active');
     document.getElementById('access-btn').classList.toggle('active', tab==='login');
+    document.getElementById('home-close-btn').style.display = (tab==='home') ? 'flex' : 'none';
     if(tab==='login'){ renderAccess(); }
     requestAnimationFrame(()=> cutOverlay.classList.remove('active') );
   }, 280);
 }
 document.getElementById('access-btn').addEventListener('click', ()=>goTo('login'));
+
+/* Salas físicas — placeholder "look" y descripción, editable luego con fotos/vídeos reales */
+const SALAS = [
+  {name:'La Oficina', floor:'p0', desc:'Zona de trabajo diario y reuniones con clientes.', look:'radial-gradient(circle at 45% 35%, #d8cdb8, #4a4030 75%)'},
+  {name:'Búnker', floor:'p1', desc:'Sala insonorizada — grabación y producción de audio.', look:'radial-gradient(circle at 50% 45%, #6a7f99, #0b1420 75%)'},
+  {name:'Tattoo Zone', floor:'p1', desc:'Espacio de DEPAUL TATTOO para sesiones de tatuaje.', look:'radial-gradient(circle at 55% 40%, #d97a3f, #2a0f04 75%)'},
+  {name:'Set Diáfano', floor:'p1', desc:'Set abierto y modulable para rodajes y fotografía.', look:'radial-gradient(circle at 50% 50%, #cfd6da, #202325 75%)'}
+];
+
+function buildSalasCard(sala){
+  const card = document.createElement('div');
+  card.className = 'salas-card';
+  card.style.background = sala.look;
+  card.innerHTML = `
+    <div class="salas-card-name">${sala.name.toUpperCase()}</div>
+    <button class="salas-card-info">INFO</button>
+    <div class="salas-card-desc">${escapeHtml(sala.desc)}</div>
+  `;
+  const desc = card.querySelector('.salas-card-desc');
+  card.querySelector('.salas-card-info').addEventListener('click', ()=> desc.classList.toggle('open'));
+  return card;
+}
+document.getElementById('salas-grid-p0').appendChild(buildSalasCard(SALAS.find(s=>s.floor==='p0')));
+SALAS.filter(s=>s.floor==='p1').forEach(s=>document.getElementById('salas-grid-p1').appendChild(buildSalasCard(s)));
+
+const salasPage = document.getElementById('salas-page');
+function openSalas(){ salasPage.classList.add('open'); }
+function closeSalas(){ salasPage.classList.remove('open'); }
+document.getElementById('salas-back').addEventListener('click', closeSalas);
+document.getElementById('home-close-btn').addEventListener('click', openSalas);
 
 tabs.forEach(b=>b.addEventListener('click', ()=>goTo(b.dataset.tab)));
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>goTo(b.dataset.goto)));
@@ -415,6 +565,9 @@ let fixedScheduleList = [];  // {id,user_id,space_id,day_of_week,start_hour,end_
 let bookingsList = [];       // {id,user_id,space_id,date,start_hour,end_hour,userName}
 let calMonth = new Date();
 let calSelected = null;
+const MIN_MONTH = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+const MAX_MONTH = new Date(2027, 4, 1); // mayo 2027
+function monthKey(d){ return d.getFullYear()*12 + d.getMonth(); }
 
 function pad(n){ return n.toString().padStart(2,'0'); }
 function isoDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -487,8 +640,8 @@ function renderAccess(){
     <div class="month-nav">
       <div class="month-title">${MONTH_NAMES[calMonth.getMonth()]} ${calMonth.getFullYear()}</div>
       <div class="month-arrows">
-        <button id="cal-prev">‹</button>
-        <button id="cal-next">›</button>
+        <button id="cal-prev" ${monthKey(calMonth)<=monthKey(MIN_MONTH)?'disabled':''}>‹</button>
+        <button id="cal-next" ${monthKey(calMonth)>=monthKey(MAX_MONTH)?'disabled':''}>›</button>
       </div>
     </div>
     <div class="cal-head">${DAY_LABELS.map(l=>`<div>${l}</div>`).join('')}</div>
@@ -498,8 +651,14 @@ function renderAccess(){
   document.getElementById('acc-logout').addEventListener('click', async ()=>{
     await sb.auth.signOut(); session=null; calSelected=null; renderAccess();
   });
-  document.getElementById('cal-prev').addEventListener('click', ()=>{ calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()-1,1); renderCalGrid(); });
-  document.getElementById('cal-next').addEventListener('click', ()=>{ calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+1,1); renderCalGrid(); });
+  document.getElementById('cal-prev').addEventListener('click', ()=>{
+    const c=new Date(calMonth.getFullYear(),calMonth.getMonth()-1,1);
+    if(monthKey(c)>=monthKey(MIN_MONTH)){ calMonth=c; renderAccess(); }
+  });
+  document.getElementById('cal-next').addEventListener('click', ()=>{
+    const c=new Date(calMonth.getFullYear(),calMonth.getMonth()+1,1);
+    if(monthKey(c)<=monthKey(MAX_MONTH)){ calMonth=c; renderAccess(); }
+  });
   renderCalGrid();
   if(calSelected) renderDayDetail();
 }
