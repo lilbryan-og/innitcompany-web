@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INNIT COMPANY</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --ink:#F5F3EE;
+  --ink-dim:rgba(245,243,238,0.62);
+  --panel-border:rgba(255,255,255,0.22);
+  --hairline:rgba(255,255,255,0.16);
+  --ease:cubic-bezier(0.40,0.24,0.40,1);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);
+  background:#000;
+  overflow:hidden;
+  height:100vh;
+  width:100vw;
+}
+.display{font-family:'Inter',system-ui,sans-serif;font-weight:800;letter-spacing:-0.03em;}
+.mono{font-family:'Geist Mono',monospace;}
+
+/* ---------- backgrounds ---------- */
+.bg-layer{
+  position:fixed;inset:0;z-index:0;
+  transition:opacity 0.55s var(--ease);
+  opacity:0;
+}
+.bg-layer.active{opacity:1;}
+#bg-home{background:
+  radial-gradient(ellipse at 60% 20%, rgba(120,170,210,0.35), transparent 55%),
+  linear-gradient(200deg, #050609 0%, #0d1a2b 45%, #1c3a54 78%, #3f6f92 100%);
+}
+#bg-work{background:
+  radial-gradient(circle at 50% 55%, #ff8a3d 0%, #d4400f 32%, #5c0f02 62%, #0d0300 100%);
+}
+#bg-about{background:
+  radial-gradient(circle at 40% 30%, #ffd9a8 0%, #e8823f 40%, #4a1608 78%, #140502 100%);
+}
+#bg-call{background:
+  radial-gradient(ellipse at 45% 60%, rgba(207,232,255,0.5), transparent 60%),
+  linear-gradient(200deg, #04070a 0%, #0f2233 45%, #274257 80%, #4d7590 100%);
+}
+.grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  opacity:0.18;mix-blend-mode:overlay;
+}
+
+/* ---------- panel ---------- */
+.stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;}
+.access-btn{
+  width:46px;height:46px;flex:0 0 auto;
+  background:linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.16) 60%, rgba(255,255,255,0.08) 100%);
+  border:1px solid var(--panel-border);
+  border-radius:14px;
+  backdrop-filter:blur(24px) saturate(185%);
+  -webkit-backdrop-filter:blur(24px) saturate(185%);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink);cursor:pointer;
+  box-shadow:0 8px 32px rgba(0,0,0,0.25), 0 1.5px 6px rgba(0,0,0,0.15);
+  transition:background 0.2s var(--ease),color 0.2s var(--ease);
+  animation:rise 0.55s var(--ease) both;
+}
+.access-btn:hover{background:linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.22) 60%, rgba(255,255,255,0.1) 100%);}
+.access-btn.active{background:var(--ink);color:#0c0b0f;}
+.panel{
+  width:440px;max-width:100%;
+  background:linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.16) 60%, rgba(255,255,255,0.08) 100%);
+  border:1px solid var(--panel-border);
+  border-radius:20px;
+  backdrop-filter:blur(24px) saturate(185%);
+  -webkit-backdrop-filter:blur(24px) saturate(185%);
+  padding:22px 24px 24px;
+  max-height:88vh;overflow-y:auto;
+  animation:rise 0.55s var(--ease) both;
+  box-shadow:0 8px 32px rgba(0,0,0,0.25), 0 1.5px 6px rgba(0,0,0,0.15);
+}
+.cut-overlay{
+  position:fixed;inset:0;z-index:10;background:#000;opacity:0;pointer-events:none;
+  transition:opacity 0.55s var(--ease);
+}
+.cut-overlay.active{opacity:1;}
+.bg-hover{
+  position:fixed;inset:0;z-index:1;opacity:0;transition:opacity 0.55s var(--ease);background-size:cover;
+}
+.bg-hover.active{opacity:1;}
+@keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+.panel-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--hairline);}
+.logo{font-size:26px;line-height:1;white-space:nowrap;}
+.tagline{font-size:10.5px;line-height:1.5;color:var(--ink-dim);text-align:right;max-width:220px;}
+
+.nav{display:flex;justify-content:space-between;gap:4px;padding:14px 0;border-bottom:1px solid var(--hairline);}
+.nav button{
+  background:none;border:none;color:var(--ink-dim);
+  font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.05em;text-transform:uppercase;
+  padding:5px 10px;border-radius:7px;text-align:left;cursor:pointer;
+  transition:background 0.2s var(--ease),color 0.2s var(--ease);
+}
+.nav button:hover{background:var(--ink);color:#0c0b0f;}
+.nav button.active{color:var(--ink);}
+
+/* ---------- private area (login + booking) ---------- */
+.access-card{border:1px solid var(--hairline);border-radius:10px;padding:16px;margin-top:10px;background:rgba(255,255,255,0.04);}
+.access-hint{font-size:11.5px;color:var(--ink-dim);line-height:1.5;margin-top:6px;}
+.link-line{background:none;border:none;color:var(--ink-dim);font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.04em;text-decoration:underline;cursor:pointer;padding:0;margin-top:14px;text-transform:uppercase;}
+.session-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.session-name{font-size:13px;font-weight:600;}
+.small-btn{background:none;border:1px solid var(--hairline);color:var(--ink-dim);font-family:'Geist Mono',monospace;font-size:10px;padding:5px 10px;border-radius:6px;cursor:pointer;text-transform:uppercase;letter-spacing:0.04em;}
+.small-btn:hover{border-color:var(--ink);color:var(--ink);}
+
+.legend-row{display:flex;gap:14px;font-size:10px;color:var(--ink-dim);margin:8px 0 10px;text-transform:uppercase;letter-spacing:0.04em;}
+.legend-row span{display:inline-flex;align-items:center;gap:5px;}
+.legend-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.legend-dot.fijo{background:#E7A339;}
+.legend-dot.extra{background:#2FB8A6;}
+
+.month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.month-title{font-size:13px;font-weight:600;text-transform:capitalize;}
+.month-arrows button{background:none;border:1px solid var(--hairline);color:var(--ink);width:22px;height:22px;border-radius:5px;cursor:pointer;font-size:12px;line-height:1;}
+.month-arrows button:hover{border-color:var(--ink);}
+
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px;}
+.cal-head div{font-size:8.5px;color:var(--ink-dim);text-align:center;text-transform:uppercase;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-cell{
+  min-height:38px;border:1px solid rgba(255,255,255,0.08);border-radius:5px;
+  padding:3px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;
+  transition:background 0.15s var(--ease);
+}
+.cal-cell:hover{background:rgba(255,255,255,0.08);}
+.cal-cell.outside{opacity:0.25;cursor:default;}
+.cal-cell.today{border-color:var(--ink);}
+.cal-cell.selected{background:rgba(255,255,255,0.14);}
+.cal-date{font-family:'Geist Mono',monospace;font-size:10px;}
+.cal-markers{display:flex;gap:2px;flex-wrap:wrap;}
+.cal-marker{width:4px;height:4px;border-radius:50%;}
+.cal-marker.fijo{background:#E7A339;}
+.cal-marker.extra{background:#2FB8A6;}
+
+.day-detail{margin-top:14px;border-top:1px solid var(--hairline);padding-top:12px;}
+.space-block{margin-bottom:14px;}
+.space-name{font-size:11.5px;font-weight:600;margin-bottom:4px;}
+.slot-row{display:flex;align-items:center;gap:7px;font-size:11.5px;margin-bottom:3px;color:var(--ink-dim);}
+.slot-time{font-family:'Geist Mono',monospace;color:var(--ink);min-width:76px;}
+.slot-tag{font-size:9px;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:0.03em;}
+.slot-tag.fijo{background:rgba(231,163,57,0.18);color:#E7A339;}
+.slot-tag.extra{background:rgba(47,184,166,0.18);color:#2FB8A6;}
+.add-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;align-items:center;}
+.add-row select{background:rgba(255,255,255,0.06);border:1px solid var(--hairline);color:var(--ink);border-radius:5px;padding:5px;font-size:11px;font-family:'Geist Mono',monospace;}
+.mini-btn{background:var(--ink);color:#0c0b0f;border:none;border-radius:5px;padding:5px 10px;font-size:10px;font-family:'Geist Mono',monospace;cursor:pointer;text-transform:uppercase;}
+.form-error{color:#ff8080;font-size:10.5px;margin-top:5px;}
+
+.admin-overlay{position:fixed;inset:0;background:rgba(5,5,8,0.75);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px;}
+.admin-card{
+  width:400px;max-width:100%;max-height:84vh;overflow-y:auto;padding:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 100%);
+  border:1px solid var(--panel-border);border-radius:16px;backdrop-filter:blur(24px) saturate(185%);
+  -webkit-backdrop-filter:blur(24px) saturate(185%);
+}
+.admin-h{font-size:18px;font-weight:700;margin:0 0 2px;}
+.admin-section{margin-top:16px;padding-top:14px;border-top:1px solid var(--hairline);}
+.admin-section h4{font-size:10px;margin:0 0 8px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.05em;}
+.row-item{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.05);border-radius:6px;padding:6px 10px;margin-bottom:5px;font-size:11.5px;}
+.remove-x{background:none;border:none;color:var(--ink-dim);font-size:14px;cursor:pointer;}
+.remove-x:hover{color:#ff8080;}
+.inline-fields{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.inline-fields input,.inline-fields select{flex:1;min-width:90px;padding:6px;background:rgba(255,255,255,0.06);border:1px solid var(--hairline);color:var(--ink);border-radius:5px;font-size:11px;font-family:'Inter',sans-serif;}
+.close-x{background:none;border:none;color:var(--ink-dim);font-size:20px;cursor:pointer;line-height:1;}
+.close-x:hover{color:var(--ink);}
+.subnav-label{font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink);padding:12px 0 4px;letter-spacing:0.05em;text-transform:uppercase;}
+
+.section{padding-top:6px;}
+.section-label{font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink-dim);margin:14px 0 6px;letter-spacing:0.05em;text-transform:uppercase;}
+
+/* work table */
+.proj-table{width:100%;border-collapse:collapse;font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;}
+.proj-table th{text-align:left;color:var(--ink-dim);font-weight:500;padding:4px 6px 6px 0;border-bottom:1px solid var(--hairline);letter-spacing:0.05em;}
+.proj-table td{padding:4px 6px 4px 0;color:var(--ink);letter-spacing:0.03em;}
+.proj-table tr:not(:last-child) td{border-bottom:1px solid rgba(255,255,255,0.06);}
+.proj-table tr{cursor:default;transition:background 0.2s var(--ease),color 0.2s var(--ease);}
+.proj-table tr.hovered td{background:var(--ink);color:#0c0b0f;}
+@media (max-width:420px){ .proj-table .col-year{display:none;} }
+
+.services-row{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:6px;}
+.stat-num{font-size:23px;font-family:'Inter',sans-serif;font-weight:600;cursor:default;}
+.stat-label{font-size:9.5px;color:var(--ink-dim);margin-top:2px;line-height:1.3;text-transform:uppercase;letter-spacing:0.04em;}
+
+/* about */
+.about-photo{
+  width:100%;aspect-ratio:4/3;border:1px solid var(--panel-border);
+  background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.16), transparent 55%), linear-gradient(160deg,#3a1c10,#7a3a18);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.5);font-family:'Geist Mono',monospace;font-size:11px;margin-top:10px;
+}
+.about-name{font-size:14px;font-weight:600;margin-top:14px;}
+.about-role{font-size:12.5px;color:var(--ink-dim);margin-top:3px;line-height:1.5;}
+.about-bio{font-size:13px;color:var(--ink);margin-top:12px;line-height:1.6;}
+
+.btn{
+  display:block;width:100%;text-align:center;background:var(--ink);color:#0c0b0f;
+  border:none;padding:10px 0;margin-top:16px;font-family:'Geist Mono',monospace;
+  font-size:11.5px;letter-spacing:0.06em;cursor:pointer;
+}
+.btn:hover{filter:brightness(0.92);}
+
+/* call form */
+.field{width:100%;background:transparent;border:none;border-bottom:1px solid var(--hairline);
+  color:var(--ink);font-family:'Inter',sans-serif;font-size:13px;padding:10px 0;margin-top:8px;}
+.field::placeholder{color:var(--ink-dim);}
+.field:focus{outline:none;border-bottom-color:var(--ink);}
+textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
+.footer-copy{text-align:center;font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink-dim);margin-top:20px;padding-top:14px;border-top:1px solid var(--hairline);}
+.form-sent{font-size:12.5px;color:var(--ink);margin-top:12px;display:none;}
+
+@media (max-width:480px){
+  .panel{width:100%;padding:18px 18px 20px;}
+  .tagline{max-width:150px;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer active" id="bg-home"></div>
+<div class="bg-layer" id="bg-work"></div>
+<div class="bg-layer" id="bg-about"></div>
+<div class="bg-layer" id="bg-call"></div>
+<div class="bg-hover" id="bg-hover"></div>
+<div class="cut-overlay" id="cut-overlay"></div>
+<svg class="grain" width="100%" height="100%">
+  <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>
+  <rect width="100%" height="100%" filter="url(#n)"/>
+</svg>
+
+<div class="stage">
+  <div class="panel" id="panel">
+
+    <div class="panel-header">
+      <div class="logo display">INNIT COMPANY</div>
+      <div class="tagline mono">DE LA IDEA AL LANZAMIENTO — SIN VUELTAS, CON CRITERIO.</div>
+    </div>
+
+    <div class="nav">
+      <button data-tab="home" class="active">HOME</button>
+      <button data-tab="work">WORK</button>
+      <button data-tab="about">ABOUT</button>
+      <button data-tab="call">CALL</button>
+    </div>
+
+    <!-- HOME -->
+    <div class="section" data-section="home">
+      <div class="section-label">ESPACIO CREATIVO</div>
+      <p style="font-size:13px;line-height:1.6;color:var(--ink);margin:0 0 4px;">
+        Productora audiovisual y agencia de marketing con sede en Madrid.
+        Rodamos, editamos y lanzamos — todo desde el mismo equipo.
+      </p>
+    </div>
+
+    <!-- WORK -->
+    <div class="section" data-section="work" style="display:none;">
+      <div class="section-label">PROYECTOS</div>
+      <table class="proj-table">
+        <tr><th>NOMBRE</th><th>TIPO</th><th class="col-year">AÑO</th></tr>
+        <tbody id="proj-rows"></tbody>
+      </table>
+
+      <div class="section-label">SERVICIOS</div>
+      <div class="services-row">
+        <span>PRODUCCIÓN</span><span>BRANDING</span><span>MOTION</span><span>SOCIAL</span>
+      </div>
+
+      <div class="section-label">¿POR QUÉ NOSOTROS?</div>
+      <div class="stats-grid">
+        <div><div class="stat-num" data-target="40" data-suffix="+">40+</div><div class="stat-label">PROYECTOS ENTREGADOS</div></div>
+        <div><div class="stat-num" data-target="12" data-suffix="">12</div><div class="stat-label">AÑOS DE EXPERIENCIA</div></div>
+        <div><div class="stat-num" data-target="95" data-suffix="%">95%</div><div class="stat-label">CLIENTES QUE REPITEN</div></div>
+        <div><div class="stat-num" data-target="3" data-suffix="M+">3M+</div><div class="stat-label">ALCANCE GENERADO</div></div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="section" data-section="about" style="display:none;">
+      <div class="section-label">ABOUT</div>
+      <div class="about-photo">FOTO DEL EQUIPO</div>
+      <div class="about-name">EQUIPO INNIT COMPANY</div>
+      <div class="about-role">PRODUCTORA AUDIOVISUAL & AGENCIA DE MARKETING — MADRID</div>
+      <p class="about-bio">Un mismo equipo piensa la idea, la rueda y la pone a funcionar. Sin intermediarios entre el guion y el resultado.</p>
+      <button class="btn" data-goto="call">CONTACTAR</button>
+    </div>
+
+    <!-- CALL -->
+    <div class="section" data-section="call" style="display:none;">
+      <div class="section-label">CALL</div>
+      <input class="field" id="f-name" placeholder="NOMBRE" />
+      <input class="field" id="f-email" placeholder="EMAIL" />
+      <textarea class="field" id="f-text" placeholder="MENSAJE"></textarea>
+      <button class="btn" id="send-btn">ENVIAR</button>
+      <div class="form-sent" id="form-sent">Mensaje listo — conectá esto a vuestro email o formulario real antes de publicar.</div>
+      <div class="footer-copy">© INNIT COMPANY 2026</div>
+    </div>
+
+    <!-- LOGIN / RESERVAS (privado) -->
+    <div class="section" data-section="login" style="display:none;">
+      <div class="section-label">ACCESO EQUIPO</div>
+      <div id="access-root"></div>
+    </div>
+
+  </div>
+
+  <button class="access-btn" id="access-btn" aria-label="Acceso privado" title="Acceso equipo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+  </button>
+</div>
+
+<div id="admin-mount"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const tabs = document.querySelectorAll('.nav button');
+const sections = document.querySelectorAll('.section');
+const bgs = document.querySelectorAll('.bg-layer');
+const cutOverlay = document.getElementById('cut-overlay');
+
+/* Placeholder "look" per project — swap these for real stills/video frames later */
+const PROJECTS = [
+  {name:'AURORA',   type:'SPOT TV',         year:'2025', look:'radial-gradient(circle at 40% 35%, #6a7f99, #101820 70%)'},
+  {name:'NIMBUS',   type:'IDENTIDAD',       year:'2025', look:'radial-gradient(circle at 60% 40%, #cfd6da, #2b2f33 75%)'},
+  {name:'ECLIPSE',  type:'CAMPAÑA',         year:'2026', look:'radial-gradient(circle at 50% 50%, #3fd6c8, #052a26 75%)'},
+  {name:'ORBIT',    type:'DOCUMENTAL',      year:'2024', look:'radial-gradient(circle at 45% 30%, #b8935a, #1a0f05 75%)'},
+  {name:'LUMEN',    type:'BRANDED CONTENT', year:'2026', look:'radial-gradient(circle at 55% 45%, #ff5f7a, #26030c 75%)'},
+  {name:'VÉRTICE',  type:'REBRANDING',      year:'2025', look:'radial-gradient(circle at 50% 40%, #8f7bff, #0a0620 75%)'}
+];
+
+const rowsBody = document.getElementById('proj-rows');
+const bgHover = document.getElementById('bg-hover');
+
+PROJECTS.forEach(p=>{
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${p.name}</td><td>${p.type}</td><td class="col-year">${p.year}</td>`;
+  tr.addEventListener('mouseenter', ()=>{
+    tr.classList.add('hovered');
+    bgHover.style.background = p.look;
+    bgHover.classList.add('active');
+  });
+  tr.addEventListener('mouseleave', ()=>{
+    tr.classList.remove('hovered');
+    bgHover.classList.remove('active');
+  });
+  rowsBody.appendChild(tr);
+});
+
+function goTo(tab){
+  cutOverlay.classList.add('active');
+  setTimeout(()=>{
+    tabs.forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+    sections.forEach(s=>s.style.display = (s.dataset.section===tab ? '' : 'none'));
+    bgs.forEach(b=>b.classList.toggle('active', b.id === 'bg-'+tab));
+    bgHover.classList.remove('active');
+    document.getElementById('access-btn').classList.toggle('active', tab==='login');
+    if(tab==='login'){ renderAccess(); }
+    requestAnimationFrame(()=> cutOverlay.classList.remove('active') );
+  }, 280);
+}
+document.getElementById('access-btn').addEventListener('click', ()=>goTo('login'));
+
+tabs.forEach(b=>b.addEventListener('click', ()=>goTo(b.dataset.tab)));
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>goTo(b.dataset.goto)));
+
+/* Count-up on hover for the stat numbers */
+document.querySelectorAll('.stat-num').forEach(el=>{
+  el.addEventListener('mouseenter', ()=>{
+    if(el.dataset.animating==='1') return;
+    el.dataset.animating='1';
+    const target = parseInt(el.dataset.target,10);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1200;
+    const start = performance.now();
+    function step(now){
+      const p = Math.min((now-start)/duration, 1);
+      const eased = 1 - Math.pow(1-p, 3);
+      el.textContent = Math.round(eased*target) + suffix;
+      if(p<1){ requestAnimationFrame(step); } else { el.dataset.animating='0'; }
+    }
+    requestAnimationFrame(step);
+  });
+});
+
+document.getElementById('send-btn').addEventListener('click', ()=>{
+  document.getElementById('form-sent').style.display = 'block';
+});
+
+/* =====================================================
+   ACCESO PRIVADO — login + calendario de reservas (Supabase)
+   ===================================================== */
+const SUPABASE_URL = 'https://mjmffatrtiieiqxyzwxj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_2JVO27C79lMkmAoEVZmx3g_Xdax_jig';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const HOURS = [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
+const DAY_LABELS = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
+const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+let session = null;          // {id, email, name}
+let spacesList = [];
+let fixedScheduleList = [];  // {id,user_id,space_id,day_of_week,start_hour,end_hour,userName}
+let bookingsList = [];       // {id,user_id,space_id,date,start_hour,end_hour,userName}
+let calMonth = new Date();
+let calSelected = null;
+
+function pad(n){ return n.toString().padStart(2,'0'); }
+function isoDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function mondayIndex(d){ return (d.getDay()+6)%7; }
+function overlaps(aS,aE,bS,bE){ return aS<bE && bS<aE; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function conflictsFor(spaceId, dateIso, dow, startHour, endHour){
+  const fixedConf = fixedScheduleList.some(f=>f.space_id===spaceId && f.day_of_week===dow && overlaps(startHour,endHour,f.start_hour,f.end_hour));
+  const extraConf = bookingsList.some(b=>b.space_id===spaceId && b.date===dateIso && overlaps(startHour,endHour,b.start_hour,b.end_hour));
+  return fixedConf || extraConf;
+}
+
+async function setSessionFromUser(user){
+  const { data: prof } = await sb.from('profiles').select('name').eq('id', user.id).single();
+  session = { id: user.id, email: user.email, name: prof ? prof.name : user.email };
+}
+
+async function loadDomainData(){
+  const [{data:sp}, {data:fx}, {data:bk}, {data:profs}] = await Promise.all([
+    sb.from('spaces').select('*'),
+    sb.from('fixed_schedule').select('*'),
+    sb.from('bookings').select('*'),
+    sb.from('profiles').select('*')
+  ]);
+  spacesList = sp || [];
+  const nameOf = id => { const p=(profs||[]).find(x=>x.id===id); return p?p.name:'—'; };
+  fixedScheduleList = (fx||[]).map(f=>({...f, userName:nameOf(f.user_id)}));
+  bookingsList = (bk||[]).map(b=>({...b, userName:nameOf(b.user_id)}));
+}
+
+async function initAccess(){
+  const { data:{ session: sbSession } } = await sb.auth.getSession();
+  if(sbSession){ await setSessionFromUser(sbSession.user); }
+  await loadDomainData();
+}
+
+function renderAccess(){
+  const root = document.getElementById('access-root');
+  if(!session){
+    root.innerHTML = `
+      <p class="access-hint">Acceso solo para el equipo fijo del espacio. Entrá con tu email y contraseña.</p>
+      <input class="field" id="acc-email" type="email" placeholder="EMAIL" />
+      <input class="field" id="acc-pass" type="password" placeholder="CONTRASEÑA" />
+      <div class="form-error" id="acc-error" style="display:none;"></div>
+      <button class="btn" id="acc-login-btn">ENTRAR</button>
+    `;
+    document.getElementById('acc-login-btn').addEventListener('click', async ()=>{
+      const email = document.getElementById('acc-email').value.trim();
+      const password = document.getElementById('acc-pass').value;
+      const err = document.getElementById('acc-error');
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if(error){ err.style.display='block'; err.textContent = error.message; return; }
+      await setSessionFromUser(data.user);
+      await loadDomainData();
+      renderAccess();
+    });
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="session-row">
+      <div class="session-name">${escapeHtml(session.name)}</div>
+      <button class="small-btn" id="acc-logout">Salir</button>
+    </div>
+    <div class="legend-row">
+      <span><span class="legend-dot fijo"></span>Fijo</span>
+      <span><span class="legend-dot extra"></span>Extra</span>
+    </div>
+    <div class="month-nav">
+      <div class="month-title">${MONTH_NAMES[calMonth.getMonth()]} ${calMonth.getFullYear()}</div>
+      <div class="month-arrows">
+        <button id="cal-prev">‹</button>
+        <button id="cal-next">›</button>
+      </div>
+    </div>
+    <div class="cal-head">${DAY_LABELS.map(l=>`<div>${l}</div>`).join('')}</div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div id="day-detail"></div>
+  `;
+  document.getElementById('acc-logout').addEventListener('click', async ()=>{
+    await sb.auth.signOut(); session=null; calSelected=null; renderAccess();
+  });
+  document.getElementById('cal-prev').addEventListener('click', ()=>{ calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()-1,1); renderCalGrid(); });
+  document.getElementById('cal-next').addEventListener('click', ()=>{ calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+1,1); renderCalGrid(); });
+  renderCalGrid();
+  if(calSelected) renderDayDetail();
+}
+
+function renderCalGrid(){
+  const grid = document.getElementById('cal-grid');
+  const year = calMonth.getFullYear(), month = calMonth.getMonth();
+  const first = new Date(year,month,1);
+  const startOffset = mondayIndex(first);
+  const daysInMonth = new Date(year,month+1,0).getDate();
+  const cells = [];
+  for(let i=0;i<startOffset;i++){ const d=new Date(year,month,1-(startOffset-i)); cells.push({date:d,outside:true}); }
+  for(let d=1; d<=daysInMonth; d++){ cells.push({date:new Date(year,month,d), outside:false}); }
+  while(cells.length%7!==0){ const last=cells[cells.length-1].date; const d=new Date(last); d.setDate(d.getDate()+1); cells.push({date:d,outside:true}); }
+  const todayIso = isoDate(new Date());
+  grid.innerHTML = cells.map(c=>{
+    const iso = isoDate(c.date);
+    const dow = mondayIndex(c.date);
+    const fixedCount = fixedScheduleList.filter(f=>f.day_of_week===dow).length;
+    const extraCount = bookingsList.filter(b=>b.date===iso).length;
+    const markers = [];
+    for(let i=0;i<Math.min(fixedCount,4);i++) markers.push('<span class="cal-marker fijo"></span>');
+    for(let i=0;i<Math.min(extraCount,4);i++) markers.push('<span class="cal-marker extra"></span>');
+    return `<div class="cal-cell ${c.outside?'outside':''} ${iso===todayIso?'today':''} ${iso===calSelected?'selected':''}" data-date="${iso}">
+      <div class="cal-date">${c.date.getDate()}</div>
+      <div class="cal-markers">${markers.join('')}</div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.cal-cell:not(.outside)').forEach(cell=>{
+    cell.addEventListener('click', ()=>{ calSelected = cell.dataset.date; renderCalGrid(); renderDayDetail(); });
+  });
+}
+
+function renderDayDetail(){
+  const box = document.getElementById('day-detail');
+  if(!calSelected){ box.innerHTML=''; return; }
+  const d = new Date(calSelected+'T00:00:00');
+  const dow = mondayIndex(d);
+  const label = `${DAY_LABELS[dow]} ${d.getDate()} DE ${MONTH_NAMES[d.getMonth()].toUpperCase()}`;
+
+  box.innerHTML = `<div class="day-detail"><div class="section-label">${label}</div>` +
+    spacesList.map(sp=>{
+      const fixed = fixedScheduleList.filter(f=>f.space_id===sp.id && f.day_of_week===dow);
+      const extra = bookingsList.filter(b=>b.space_id===sp.id && b.date===calSelected);
+      const all = [...fixed.map(f=>({...f,kind:'fijo',who:f.userName})), ...extra.map(b=>({...b,kind:'extra',who:b.userName}))];
+      const rows = all.length ? all.map(s=>`
+        <div class="slot-row">
+          <span class="slot-time">${pad(s.start_hour)}–${pad(s.end_hour)}</span>
+          <span class="slot-tag ${s.kind}">${s.kind==='fijo'?'Fijo':'Extra'}</span>
+          <span>${escapeHtml(s.who)}</span>
+          ${s.kind==='extra' && s.user_id===session.id ? `<button class="remove-x" data-cancel="${s.id}" title="Cancelar">✕</button>` : ''}
+        </div>`).join('') : `<div class="slot-row">Libre todo el día</div>`;
+      return `<div class="space-block" data-space="${sp.id}">
+        <div class="space-name">${escapeHtml(sp.name)}</div>
+        ${rows}
+        <div id="add-${sp.id}"></div>
+        <button class="small-btn" data-add="${sp.id}" style="margin-top:6px;">+ Reservar extra</button>
+      </div>`;
+    }).join('') + `</div>`;
+
+  box.querySelectorAll('[data-cancel]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.getAttribute('data-cancel');
+      await sb.from('bookings').delete().eq('id', id);
+      await loadDomainData();
+      renderDayDetail(); renderCalGrid();
+    });
+  });
+
+  box.querySelectorAll('[data-add]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const spaceId = btn.getAttribute('data-add');
+      const holder = document.getElementById('add-'+spaceId);
+      if(holder.dataset.open==='1'){ holder.innerHTML=''; holder.dataset.open='0'; return; }
+      holder.dataset.open='1';
+      holder.innerHTML = `
+        <div class="add-row">
+          <select class="add-start">${HOURS.slice(0,-1).map(h=>`<option value="${h}">${pad(h)}:00</option>`).join('')}</select>
+          <span style="font-size:11px;color:var(--ink-dim);">a</span>
+          <select class="add-end">${HOURS.slice(1).map(h=>`<option value="${h}">${pad(h)}:00</option>`).join('')}</select>
+          <button class="mini-btn" data-confirm="${spaceId}">Reservar</button>
+        </div>
+        <div class="form-error" style="display:none;"></div>`;
+      holder.querySelector('[data-confirm]').addEventListener('click', async ()=>{
+        const s = parseInt(holder.querySelector('.add-start').value,10);
+        const e = parseInt(holder.querySelector('.add-end').value,10);
+        const err = holder.querySelector('.form-error');
+        const dow2 = mondayIndex(new Date(calSelected+'T00:00:00'));
+        if(e<=s){ err.style.display='block'; err.textContent='La hora de fin debe ser posterior a la de inicio.'; return; }
+        if(conflictsFor(spaceId, calSelected, dow2, s, e)){ err.style.display='block'; err.textContent='Ese horario ya está ocupado.'; return; }
+        const { error } = await sb.from('bookings').insert({ user_id: session.id, space_id: spaceId, date: calSelected, start_hour: s, end_hour: e });
+        if(error){ err.style.display='block'; err.textContent='No se pudo guardar: '+error.message; return; }
+        await loadDomainData();
+        renderDayDetail(); renderCalGrid();
+      });
+    });
+  });
+}
+
+initAccess();
+</script>
+</body>
+</html>
