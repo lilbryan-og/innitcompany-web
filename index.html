@@ -337,7 +337,9 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 <div class="bg-layer" id="bg-about"></div>
 <div class="bg-layer" id="bg-call"></div>
 <div class="bg-layer" id="bg-salas"></div>
-<div class="bg-hover" id="bg-hover"></div>
+<div class="bg-hover" id="bg-hover">
+  <video id="bg-hover-video" muted loop playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
+</div>
 <div class="cut-overlay" id="cut-overlay"></div>
 <svg class="grain" width="100%" height="100%">
   <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>
@@ -380,15 +382,15 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 
       <div class="section-label">SERVICIOS</div>
       <div class="services-row">
-        <span>PRODUCCIÓN</span><span>BRANDING</span><span>MOTION</span><span>SOCIAL</span>
+        <span>PRODUCCIÓN AUDIOVISUAL</span><span>BRANDING</span><span>SOCIAL CONTENT FOR BRANDS</span>
       </div>
 
       <div class="section-label">¿POR QUÉ NOSOTROS?</div>
       <div class="stats-grid">
-        <div><div class="stat-num" data-target="40" data-suffix="+">40+</div><div class="stat-label">PROYECTOS ENTREGADOS</div></div>
-        <div><div class="stat-num" data-target="12" data-suffix="">12</div><div class="stat-label">AÑOS DE EXPERIENCIA</div></div>
-        <div><div class="stat-num" data-target="95" data-suffix="%">95%</div><div class="stat-label">CLIENTES QUE REPITEN</div></div>
-        <div><div class="stat-num" data-target="3" data-suffix="M+">3M+</div><div class="stat-label">ALCANCE GENERADO</div></div>
+        <div><div class="stat-num" data-target="50" data-suffix="+">50+</div><div class="stat-label">PROYECTOS REALIZADOS</div></div>
+        <div><div class="stat-num" data-target="6" data-suffix="">6</div><div class="stat-label">AÑOS DE EXPERIENCIA</div></div>
+        <div><div class="stat-num" data-target="90" data-suffix="%">90%</div><div class="stat-label">DE CLIENTES REPITEN</div></div>
+        <div><div class="stat-num" data-target="50" data-suffix="M+">50M+</div><div class="stat-label">ALCANCE DE PROYECTOS</div></div>
       </div>
     </div>
 
@@ -449,30 +451,42 @@ const sections = document.querySelectorAll('.section');
 const bgs = document.querySelectorAll('.bg-layer');
 const cutOverlay = document.getElementById('cut-overlay');
 
-/* Placeholder "look" per project — swap these for real stills/video frames later */
+/* Proyectos reales — "look" es el color de respaldo mientras llega cada vídeo.
+   Cuando tengas el archivo, solo hay que rellenar "video": 'work_nombre.mp4' */
 const PROJECTS = [
-  {name:'AURORA',   type:'SPOT TV',         year:'2025', look:'radial-gradient(circle at 40% 35%, #6a7f99, #101820 70%)'},
-  {name:'NIMBUS',   type:'IDENTIDAD',       year:'2025', look:'radial-gradient(circle at 60% 40%, #cfd6da, #2b2f33 75%)'},
-  {name:'ECLIPSE',  type:'CAMPAÑA',         year:'2026', look:'radial-gradient(circle at 50% 50%, #3fd6c8, #052a26 75%)'},
-  {name:'ORBIT',    type:'DOCUMENTAL',      year:'2024', look:'radial-gradient(circle at 45% 30%, #b8935a, #1a0f05 75%)'},
-  {name:'LUMEN',    type:'BRANDED CONTENT', year:'2026', look:'radial-gradient(circle at 55% 45%, #ff5f7a, #26030c 75%)'},
-  {name:'VÉRTICE',  type:'REBRANDING',      year:'2025', look:'radial-gradient(circle at 50% 40%, #8f7bff, #0a0620 75%)'}
+  {name:'LIL NAAY EN MADRID',  type:'AFTERMOVIE',                  year:'2026', video:'work_lilnaay.mp4', look:'radial-gradient(circle at 40% 35%, #6a7f99, #101820 70%)'},
+  {name:'MASTERINK',           type:'PRODUCCIÓN DE CURSO ONLINE',  year:'2026', video:'work_masterink.mp4', look:'radial-gradient(circle at 60% 40%, #cfd6da, #2b2f33 75%)'},
+  {name:'ASESINAME',           type:'VIDEOCLIP',                   year:'2026', video:'work_asesiname.mp4', look:'radial-gradient(circle at 50% 50%, #3fd6c8, #052a26 75%)'},
+  {name:'CASABLANCA RECORS',   type:'WEB VISUAL',                  year:'2025', video:'work_casablanca.mp4', look:'radial-gradient(circle at 45% 30%, #b8935a, #1a0f05 75%)'},
+  {name:'LA GRAN BODA',        type:'BODA',                        year:'2026', video:'work_lagranboda.mp4', look:'radial-gradient(circle at 55% 45%, #ff5f7a, #26030c 75%)'},
+  {name:'EL PADRINO',          type:'VIDEOCLIP',                   year:'2026', video:'work_elpadrino.mp4', look:'radial-gradient(circle at 50% 40%, #8f7bff, #0a0620 75%)'}
 ];
 
 const rowsBody = document.getElementById('proj-rows');
 const bgHover = document.getElementById('bg-hover');
+const bgHoverVideo = document.getElementById('bg-hover-video');
 
 PROJECTS.forEach(p=>{
   const tr = document.createElement('tr');
   tr.innerHTML = `<td>${p.name}</td><td>${p.type}</td><td class="col-year">${p.year}</td>`;
   tr.addEventListener('mouseenter', ()=>{
     tr.classList.add('hovered');
-    bgHover.style.background = p.look;
+    if(p.video){
+      bgHover.style.background = 'none';
+      if(bgHoverVideo.getAttribute('src') !== p.video){ bgHoverVideo.setAttribute('src', p.video); }
+      bgHoverVideo.style.display = 'block';
+      bgHoverVideo.play().catch(()=>{});
+    } else {
+      bgHoverVideo.pause();
+      bgHoverVideo.style.display = 'none';
+      bgHover.style.background = p.look;
+    }
     bgHover.classList.add('active');
   });
   tr.addEventListener('mouseleave', ()=>{
     tr.classList.remove('hovered');
     bgHover.classList.remove('active');
+    bgHoverVideo.pause();
   });
   rowsBody.appendChild(tr);
 });
