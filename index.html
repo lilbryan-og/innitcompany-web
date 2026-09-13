@@ -191,6 +191,8 @@ body{
   position:fixed;inset:0;z-index:1;opacity:0;transition:opacity 0.55s var(--ease);background-size:cover;
 }
 .bg-hover.active{opacity:1;}
+.hover-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.2s ease;}
+.hover-video.showing{opacity:1;}
 @keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 
 .panel-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--hairline);}
@@ -337,9 +339,7 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 <div class="bg-layer" id="bg-about"></div>
 <div class="bg-layer" id="bg-call"></div>
 <div class="bg-layer" id="bg-salas"></div>
-<div class="bg-hover" id="bg-hover">
-  <video id="bg-hover-video" muted loop playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
-</div>
+<div class="bg-hover" id="bg-hover"></div>
 <div class="cut-overlay" id="cut-overlay"></div>
 <svg class="grain" width="100%" height="100%">
   <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>
@@ -464,25 +464,27 @@ const PROJECTS = [
 
 const rowsBody = document.getElementById('proj-rows');
 const bgHover = document.getElementById('bg-hover');
-const bgHoverVideo = document.getElementById('bg-hover-video');
 
 PROJECTS.forEach(p=>{
   const tr = document.createElement('tr');
   tr.innerHTML = `<td>${p.name}</td><td>${p.type}</td><td class="col-year">${p.year}</td>`;
+
+  if(p.video){
+    const vid = document.createElement('video');
+    vid.className = 'hover-video';
+    vid.muted = true; vid.loop = true; vid.playsInline = true; vid.preload = 'none';
+    vid.src = p.video;
+    bgHover.appendChild(vid);
+    p._videoEl = vid;
+  }
+
   tr.addEventListener('mouseenter', ()=>{
     tr.classList.add('hovered');
     if(p.video){
       bgHover.style.background = 'none';
-      if(bgHoverVideo.getAttribute('src') !== p.video){
-        bgHoverVideo.setAttribute('src', p.video);
-        bgHoverVideo.load();
-      }
-      bgHoverVideo.muted = true;
-      bgHoverVideo.style.display = 'block';
-      bgHoverVideo.play().catch(()=>{});
+      p._videoEl.classList.add('showing');
+      p._videoEl.play().catch(()=>{});
     } else {
-      bgHoverVideo.pause();
-      bgHoverVideo.style.display = 'none';
       bgHover.style.background = p.look;
     }
     bgHover.classList.add('active');
@@ -490,10 +492,19 @@ PROJECTS.forEach(p=>{
   tr.addEventListener('mouseleave', ()=>{
     tr.classList.remove('hovered');
     bgHover.classList.remove('active');
-    bgHoverVideo.pause();
+    if(p.video){ p._videoEl.classList.remove('showing'); p._videoEl.pause(); }
   });
   rowsBody.appendChild(tr);
 });
+
+/* En cuanto se entra a WORK, empezamos a precargar los 6 vídeos en segundo plano,
+   así ya están listos para reproducirse al instante cuando se pase el cursor */
+let workPreloaded = false;
+function preloadWorkVideos(){
+  if(workPreloaded) return;
+  workPreloaded = true;
+  PROJECTS.forEach(p=>{ if(p._videoEl){ p._videoEl.preload = 'auto'; p._videoEl.load(); } });
+}
 
 function goTo(tab){
   cutOverlay.classList.add('active');
@@ -505,6 +516,7 @@ function goTo(tab){
     document.getElementById('access-btn').classList.toggle('active', tab==='login');
     document.getElementById('home-close-btn').style.display = (tab==='home') ? 'flex' : 'none';
     if(tab==='login'){ renderAccess(); }
+    if(tab==='work'){ preloadWorkVideos(); }
     requestAnimationFrame(()=> cutOverlay.classList.remove('active') );
   }, 280);
 }
