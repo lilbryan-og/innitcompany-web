@@ -473,7 +473,11 @@ PROJECTS.forEach(p=>{
     tr.classList.add('hovered');
     if(p.video){
       bgHover.style.background = 'none';
-      if(bgHoverVideo.getAttribute('src') !== p.video){ bgHoverVideo.setAttribute('src', p.video); }
+      if(bgHoverVideo.getAttribute('src') !== p.video){
+        bgHoverVideo.setAttribute('src', p.video);
+        bgHoverVideo.load();
+      }
+      bgHoverVideo.muted = true;
       bgHoverVideo.style.display = 'block';
       bgHoverVideo.play().catch(()=>{});
     } else {
