@@ -74,6 +74,57 @@ body{
 .access-btn:hover{background:linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.22) 60%, rgba(255,255,255,0.1) 100%);}
 .access-btn.active{background:var(--ink);color:#0c0b0f;}
 
+.work-contact-btn{
+  position:fixed;right:20px;bottom:20px;z-index:6;
+  display:none;align-items:center;gap:7px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.16) 60%, rgba(255,255,255,0.08) 100%);
+  border:1px solid var(--panel-border);
+  backdrop-filter:blur(24px) saturate(185%);
+  -webkit-backdrop-filter:blur(24px) saturate(185%);
+  color:var(--ink);text-decoration:none;
+  padding:9px 16px;border-radius:999px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.05em;
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  transition:transform 0.25s var(--ease), background 0.25s var(--ease);
+  overflow:hidden;
+}
+.work-contact-btn::after{
+  content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+  transform:skewX(-20deg);
+  animation:shine 3.2s ease-in-out infinite;
+}
+@keyframes shine{
+  0%{left:-60%;}
+  35%{left:130%;}
+  100%{left:130%;}
+}
+.work-contact-btn:hover{transform:translateY(-2px);background:linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.22) 60%, rgba(255,255,255,0.12) 100%);}
+.work-contact-btn.show{display:flex;}
+
+/* Modal Privacidad/Cookies — blanco y negro, sin color, la web queda detrás */
+.legal-overlay{
+  position:fixed;inset:0;z-index:80;background:rgba(0,0,0,0.7);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity 0.3s ease;
+}
+.legal-overlay.open{opacity:1;pointer-events:auto;}
+.legal-card{
+  width:520px;max-width:100%;height:320px;overflow-y:scroll;
+  background:#000;color:#fff;border:1px solid #fff;border-radius:2px;
+  padding:34px 30px;position:relative;
+  font-family:'Inter',sans-serif;
+}
+.legal-close{
+  position:absolute;top:14px;right:16px;background:none;border:1px solid #fff;
+  color:#fff;width:26px;height:26px;border-radius:0;font-size:16px;cursor:pointer;line-height:1;
+}
+.legal-close:hover{background:#fff;color:#000;}
+.legal-card h1{font-size:20px;margin:0 0 4px;font-weight:700;}
+.legal-card h2{font-size:13px;margin-top:26px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#fff;}
+.legal-card p,.legal-card li{font-size:13px;color:#ccc;line-height:1.65;}
+.legal-card a{color:#fff;text-decoration:underline;}
+
 /* tarjetas de sala */
 .room-card{
   position:relative;width:100%;aspect-ratio:16/10;border-radius:10px;overflow:hidden;
@@ -221,8 +272,6 @@ body{
 .legend-row{display:flex;gap:14px;font-size:10px;color:var(--ink-dim);margin:8px 0 10px;text-transform:uppercase;letter-spacing:0.04em;}
 .legend-row span{display:inline-flex;align-items:center;gap:5px;}
 .legend-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-.legend-dot.fijo{background:#E7A339;}
-.legend-dot.extra{background:#2FB8A6;}
 
 .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .month-title{font-size:13px;font-weight:600;text-transform:capitalize;}
@@ -246,8 +295,6 @@ body{
 .cal-date{font-family:'Geist Mono',monospace;font-size:10px;}
 .cal-markers{display:flex;gap:2px;flex-wrap:wrap;}
 .cal-marker{width:4px;height:4px;border-radius:50%;}
-.cal-marker.fijo{background:#E7A339;}
-.cal-marker.extra{background:#2FB8A6;}
 
 .day-detail{margin-top:14px;border-top:1px solid var(--hairline);padding-top:12px;}
 .space-block{margin-bottom:14px;}
@@ -255,8 +302,6 @@ body{
 .slot-row{display:flex;align-items:center;gap:7px;font-size:11.5px;margin-bottom:3px;color:var(--ink-dim);}
 .slot-time{font-family:'Geist Mono',monospace;color:var(--ink);min-width:76px;}
 .slot-tag{font-size:9px;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:0.03em;}
-.slot-tag.fijo{background:rgba(231,163,57,0.18);color:#E7A339;}
-.slot-tag.extra{background:rgba(47,184,166,0.18);color:#2FB8A6;}
 .add-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;align-items:center;}
 .add-row select{background:rgba(255,255,255,0.06);border:1px solid var(--hairline);color:var(--ink);border-radius:5px;padding:5px;font-size:11px;font-family:'Geist Mono',monospace;}
 .mini-btn{background:var(--ink);color:#0c0b0f;border:none;border-radius:5px;padding:5px 10px;font-size:10px;font-family:'Geist Mono',monospace;cursor:pointer;text-transform:uppercase;}
@@ -289,7 +334,7 @@ body{
 .proj-table th{text-align:left;color:var(--ink-dim);font-weight:500;padding:4px 6px 6px 0;border-bottom:1px solid var(--hairline);letter-spacing:0.05em;}
 .proj-table td{padding:4px 6px 4px 0;color:var(--ink);letter-spacing:0.03em;}
 .proj-table tr:not(:last-child) td{border-bottom:1px solid rgba(255,255,255,0.06);}
-.proj-table tr{cursor:default;transition:background 0.2s var(--ease),color 0.2s var(--ease);}
+.proj-table tr{cursor:pointer;transition:background 0.2s var(--ease),color 0.2s var(--ease);}
 .proj-table tr.hovered td{background:var(--ink);color:#0c0b0f;}
 @media (max-width:420px){ .proj-table .col-year{display:none;} }
 
@@ -324,6 +369,12 @@ body{
 .field:focus{outline:none;border-bottom-color:var(--ink);}
 textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 .footer-copy{text-align:center;font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink-dim);margin-top:20px;padding-top:14px;border-top:1px solid var(--hairline);}
+.footer-copy a{color:var(--ink-dim);text-decoration:underline;}
+.footer-copy a:hover{color:var(--ink);}
+.consent-row{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:11.5px;color:var(--ink-dim);cursor:pointer;line-height:1.5;}
+.consent-row input{margin-top:2px;accent-color:var(--ink);}
+.consent-row a{color:#2FB8A6;text-decoration:underline;}
+.btn:disabled{opacity:0.35;cursor:not-allowed;}
 .form-sent{font-size:12.5px;color:var(--ink);margin-top:12px;display:none;}
 
 @media (max-width:480px){
@@ -411,12 +462,26 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
     <!-- CALL -->
     <div class="section" data-section="call" style="display:none;">
       <div class="section-label">CALL</div>
-      <input class="field" id="f-name" placeholder="NOMBRE" />
-      <input class="field" id="f-email" placeholder="EMAIL" />
-      <textarea class="field" id="f-text" placeholder="MENSAJE"></textarea>
-      <button class="btn" id="send-btn">ENVIAR</button>
-      <div class="form-sent" id="form-sent">Mensaje listo — conectá esto a vuestro email o formulario real antes de publicar.</div>
-      <div class="footer-copy">© INNIT COMPANY 2026</div>
+      <form name="contacto" id="call-form" data-netlify="true" data-netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="contacto" />
+        <p style="display:none;"><label>No rellenar: <input name="bot-field" /></label></p>
+        <input class="field" id="f-name" name="nombre" placeholder="NOMBRE" required />
+        <input class="field" id="f-email" name="email" type="email" placeholder="EMAIL" required />
+        <textarea class="field" id="f-text" name="mensaje" placeholder="MENSAJE" required></textarea>
+        <label class="consent-row">
+          <input type="checkbox" id="f-consent" />
+          <span>He leído y acepto la <a href="#" id="link-privacidad-2">Política de Privacidad</a>.</span>
+        </label>
+        <button class="btn" type="submit" id="send-btn" disabled>ENVIAR</button>
+        <div class="form-sent" id="form-sent">¡Mensaje enviado! Te contestamos en cuanto podamos.</div>
+        <div class="form-error" id="call-error" style="display:none;">No se pudo enviar, inténtalo de nuevo o escríbenos directo a infoinnitstudio@gmail.com.</div>
+      </form>
+      <div class="footer-copy">
+        © INNIT COMPANY 2026 ·
+        <a href="aviso-legal.html" target="_blank">Aviso legal</a> ·
+        <a href="#" id="link-privacidad">Privacidad</a> ·
+        <a href="#" id="link-cookies">Cookies</a>
+      </div>
     </div>
 
     <!-- LOGIN / RESERVAS (privado) -->
@@ -443,6 +508,18 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
     <div class="salas-grid" id="salas-grid-p0"></div>
     <div class="salas-floor-label">PLANTA -1</div>
     <div class="salas-grid" id="salas-grid-p1"></div>
+  </div>
+</div>
+
+<a class="work-contact-btn" id="work-contact-btn" href="https://wa.link/rbmuk8" target="_blank" rel="noopener">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.34a9.87 9.87 0 0 0 4.62 1.15h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.51 2 12.04 2zm0 18.02h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.03-.2-.31a8.2 8.2 0 0 1-1.26-4.35c0-4.52 3.68-8.2 8.21-8.2 2.19 0 4.25.85 5.8 2.4a8.14 8.14 0 0 1 2.4 5.8c0 4.53-3.68 8.19-8.18 8.19z"/></svg>
+  CONTACTAR
+</a>
+
+<div class="legal-overlay" id="legal-overlay">
+  <div class="legal-card">
+    <button class="legal-close" id="legal-close">×</button>
+    <div id="legal-content"></div>
   </div>
 </div>
 
@@ -476,27 +553,37 @@ PROJECTS.forEach(p=>{
   if(p.video){
     const vid = document.createElement('video');
     vid.className = 'hover-video';
-    vid.muted = true; vid.loop = true; vid.playsInline = true; vid.preload = 'none';
+    vid.muted = true; vid.loop = true; vid.playsInline = true; vid.setAttribute('webkit-playsinline','true'); vid.preload = 'none';
     vid.src = p.video;
     bgHover.appendChild(vid);
     p._videoEl = vid;
   }
 
-  tr.addEventListener('mouseenter', ()=>{
+  function showRow(){
+    document.querySelectorAll('#proj-rows tr.hovered').forEach(other=>{ if(other!==tr) other.classList.remove('hovered'); });
     tr.classList.add('hovered');
     if(p.video){
       bgHover.style.background = 'none';
+      p._videoEl.preload = 'auto';
       p._videoEl.classList.add('showing');
-      p._videoEl.play().catch(()=>{});
+      const playPromise = p._videoEl.play();
+      if(playPromise){ playPromise.catch(()=>{}); }
     } else {
       bgHover.style.background = p.look;
     }
     bgHover.classList.add('active');
-  });
-  tr.addEventListener('mouseleave', ()=>{
+  }
+  function hideRow(){
     tr.classList.remove('hovered');
     bgHover.classList.remove('active');
     if(p.video){ p._videoEl.classList.remove('showing'); p._videoEl.pause(); }
+  }
+
+  tr.addEventListener('mouseenter', showRow);
+  tr.addEventListener('mouseleave', hideRow);
+  tr.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if(tr.classList.contains('hovered')){ hideRow(); } else { showRow(); }
   });
   rowsBody.appendChild(tr);
 });
@@ -519,6 +606,7 @@ function goTo(tab){
     bgHover.classList.remove('active');
     document.getElementById('access-btn').classList.toggle('active', tab==='login');
     document.getElementById('home-close-btn').style.display = (tab==='home') ? 'flex' : 'none';
+    document.getElementById('work-contact-btn').classList.toggle('show', tab==='work');
     if(tab==='login'){ renderAccess(); }
     if(tab==='work'){ preloadWorkVideos(); }
     requestAnimationFrame(()=> cutOverlay.classList.remove('active') );
@@ -578,30 +666,134 @@ document.querySelectorAll('.stat-num').forEach(el=>{
   });
 });
 
-document.getElementById('send-btn').addEventListener('click', ()=>{
-  document.getElementById('form-sent').style.display = 'block';
+document.getElementById('f-consent').addEventListener('change', (e)=>{
+  document.getElementById('send-btn').disabled = !e.target.checked;
 });
+document.getElementById('call-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const form = e.target;
+  const btn = document.getElementById('send-btn');
+  const errBox = document.getElementById('call-error');
+  errBox.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'ENVIANDO...';
+  const data = new URLSearchParams(new FormData(form)).toString();
+  fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:data })
+    .then(()=>{
+      document.getElementById('form-sent').style.display = 'block';
+      form.reset();
+      btn.textContent = 'ENVIAR';
+    })
+    .catch(()=>{
+      errBox.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'ENVIAR';
+    });
+});
+
+/* Modales de Privacidad y Cookies — blanco y negro, sobre la propia página */
+const LEGAL_TEXTS = {
+  privacidad: `
+    <h1>Política de Privacidad</h1>
+    <p>Esta política explica qué datos personales tratamos a través de este sitio web, con qué finalidad, y qué derechos tienes al respecto, en cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).</p>
+
+    <h2>Principios que aplicamos</h2>
+    <p>Tratamos tus datos conforme a los principios de licitud, lealtad y transparencia; limitación de la finalidad; minimización de datos; exactitud; limitación del plazo de conservación; e integridad y confidencialidad.</p>
+
+    <h2>¿Qué datos recogemos?</h2>
+    <p>— A través del formulario de contacto (CALL): nombre, email y el mensaje que nos envíes.<br>— A través del área privada de reservas: email y los datos de las reservas del espacio, exclusivamente de las personas con cuenta autorizada para colaborar habitualmente con el espacio.</p>
+
+    <h2>¿Para qué los usamos?</h2>
+    <p>— Responder a tus consultas y solicitudes de información.<br>— Gestionar de forma interna las reservas del espacio entre el equipo autorizado.<br>No usamos tus datos con fines publicitarios ni los cedemos a terceros para ese fin.</p>
+
+    <h2>Base legal del tratamiento</h2>
+    <p>El consentimiento que nos das al enviar voluntariamente el formulario de contacto, o la relación de colaboración existente con las personas que acceden al área privada.</p>
+
+    <h2>Encargados del tratamiento</h2>
+    <p>Para el funcionamiento técnico de la web utilizamos los siguientes proveedores, que actúan como encargados del tratamiento bajo contrato: Supabase (base de datos y autenticación) y Netlify (alojamiento web).</p>
+
+    <h2>Transferencias internacionales</h2>
+    <p>Los servidores de base de datos que utilizamos están ubicados dentro de la Unión Europea, por lo que no se realizan transferencias internacionales de datos fuera del Espacio Económico Europeo.</p>
+
+    <h2>Medidas de seguridad</h2>
+    <p>Aplicamos medidas técnicas y organizativas razonables para proteger tus datos frente a accesos no autorizados, pérdida o alteración, incluyendo el acceso restringido mediante usuario y contraseña al área privada.</p>
+
+    <h2>Plazo de conservación</h2>
+    <p>Los datos del formulario de contacto se conservan mientras sea necesario para atender tu solicitud. Los datos del área privada se conservan mientras la persona siga colaborando con el espacio.</p>
+
+    <h2>Menores de edad</h2>
+    <p>Los servicios ofrecidos a través de esta web están dirigidos a mayores de edad. No recogemos intencionadamente datos de menores.</p>
+
+    <h2>Tus derechos</h2>
+    <p>Puedes ejercer tus derechos de acceso, rectificación, supresión, limitación, oposición y portabilidad escribiendo al contacto indicado más abajo, y presentar una reclamación ante la <a href="https://www.aepd.es" target="_blank">Agencia Española de Protección de Datos</a> si lo consideras necesario.</p>
+
+    <h2>Cambios en esta política</h2>
+    <p>Podemos actualizar esta política para adaptarla a novedades legislativas o cambios en el funcionamiento del sitio. La fecha de la última revisión figura al final de este documento.</p>
+
+    <p style="font-size:10.5px;color:#777;margin-top:30px;padding-top:14px;border-top:1px solid #333;">
+      Responsable del tratamiento: Bryan Geovanny Ayora Alvarez (INNIT COMPANY) · NIF 05322484P · Calle Huerta de Castañeda, 29, Bajo B, Madrid, 28020 · lilbrivninfo@gmail.com<br>
+      Última revisión: 2026.
+    </p>
+  `,
+  cookies: `
+    <h1>Política de Cookies</h1>
+    <p>Esta página explica qué son las cookies, qué tipos existen, y cuáles utiliza concretamente este sitio web.</p>
+
+    <h2>¿Qué son las cookies?</h2>
+    <p>Las cookies (y tecnologías similares como el almacenamiento local del navegador) son pequeños archivos que un sitio web guarda en tu dispositivo para recordar información entre visitas o durante tu sesión.</p>
+
+    <h2>Tipos de cookies según su finalidad</h2>
+    <p>— <strong>Técnicas o necesarias:</strong> imprescindibles para el funcionamiento básico del sitio.<br>— <strong>De personalización:</strong> recuerdan preferencias del usuario.<br>— <strong>Analíticas:</strong> miden el uso del sitio de forma agregada.<br>— <strong>Publicitarias:</strong> permiten mostrar anuncios relevantes.</p>
+
+    <h2>Qué utiliza esta web en concreto</h2>
+    <p>Actualmente, este sitio utiliza únicamente almacenamiento técnico estrictamente necesario: cuando una persona autorizada inicia sesión en el área privada de reservas, guardamos de forma segura su sesión para que no tenga que volver a identificarse en cada visita. Lo gestiona nuestro proveedor Supabase.</p>
+    <p>No utilizamos cookies de personalización, analítica ni publicidad de terceros.</p>
+
+    <h2>¿Por qué no hay banner de consentimiento?</h2>
+    <p>Conforme al artículo 22.2 de la LSSICE, las cookies estrictamente necesarias para el servicio solicitado por el usuario están exentas de requerir consentimiento previo. Si en el futuro se incorporan cookies de analítica o publicidad, esta política se actualizará y se solicitará el consentimiento correspondiente mediante un banner.</p>
+
+    <h2>Cómo gestionar las cookies desde tu navegador</h2>
+    <p>Puedes eliminar o bloquear las cookies en cualquier momento desde la configuración de tu navegador. Ten en cuenta que bloquear el almacenamiento técnico puede impedir el acceso al área privada de reservas.</p>
+
+    <h2>Cambios en esta política</h2>
+    <p>Podemos actualizar esta política si cambia el funcionamiento del sitio. Última revisión: 2026.</p>
+  `
+};
+const legalOverlay = document.getElementById('legal-overlay');
+const legalContent = document.getElementById('legal-content');
+function openLegal(key){ legalContent.innerHTML = LEGAL_TEXTS[key]; legalOverlay.classList.add('open'); }
+function closeLegal(){ legalOverlay.classList.remove('open'); }
+document.getElementById('link-privacidad').addEventListener('click', (e)=>{ e.preventDefault(); openLegal('privacidad'); });
+document.getElementById('link-privacidad-2').addEventListener('click', (e)=>{ e.preventDefault(); openLegal('privacidad'); });
+document.getElementById('link-cookies').addEventListener('click', (e)=>{ e.preventDefault(); openLegal('cookies'); });
+document.getElementById('legal-close').addEventListener('click', closeLegal);
+legalOverlay.addEventListener('click', (e)=>{ if(e.target.id==='legal-overlay') closeLegal(); });
 
 /* =====================================================
    ACCESO PRIVADO — login + calendario de reservas (Supabase)
    ===================================================== */
 const SUPABASE_URL = 'https://mjmffatrtiieiqxyzwxj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_2JVO27C79lMkmAoEVZmx3g_Xdax_jig';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let sb = null;
+try{ sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }
+catch(e){ console.error('No se pudo inicializar Supabase:', e); }
 
 const HOURS = [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
 const DAY_LABELS = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
 const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const PERSON_COLORS = { 'HDMI':'#4a9eff', 'DEPAUL TATTOO':'#ff5a5a', 'INNIT COMPANY':'#d8d8d8' };
+function colorFor(name){ return PERSON_COLORS[name] || '#9C97A6'; }
 
 let session = null;          // {id, email, name}
 let spacesList = [];
-let fixedScheduleList = [];  // {id,user_id,space_id,day_of_week,start_hour,end_hour,userName}
-let bookingsList = [];       // {id,user_id,space_id,date,start_hour,end_hour,userName}
+let bookingsList = [];       // {id,user_id,space_id,date,start_hour,end_hour,userName,token_type}
 let calMonth = new Date();
 let calSelected = null;
 const MIN_MONTH = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 const MAX_MONTH = new Date(2027, 4, 1); // mayo 2027
 function monthKey(d){ return d.getFullYear()*12 + d.getMonth(); }
+const TOKEN_LIMITED = ['HDMI','DEPAUL TATTOO']; // INNIT COMPANY queda fuera: sin límite
+const FIJO_PER_WEEK = 2, EXTRA_PER_WEEK = 5;
 
 function pad(n){ return n.toString().padStart(2,'0'); }
 function isoDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -609,10 +801,42 @@ function mondayIndex(d){ return (d.getDay()+6)%7; }
 function overlaps(aS,aE,bS,bE){ return aS<bE && bS<aE; }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-function conflictsFor(spaceId, dateIso, dow, startHour, endHour){
-  const fixedConf = fixedScheduleList.some(f=>f.space_id===spaceId && f.day_of_week===dow && overlaps(startHour,endHour,f.start_hour,f.end_hour));
-  const extraConf = bookingsList.some(b=>b.space_id===spaceId && b.date===dateIso && overlaps(startHour,endHour,b.start_hour,b.end_hour));
-  return fixedConf || extraConf;
+function conflictsFor(spaceId, dateIso, startHour, endHour){
+  return bookingsList.some(b=>b.space_id===spaceId && b.date===dateIso && overlaps(startHour,endHour,b.start_hour,b.end_hour));
+}
+
+function weekRangeOf(dateIso){
+  const d = new Date(dateIso+'T00:00:00');
+  const monday = new Date(d); monday.setDate(d.getDate() - mondayIndex(d));
+  const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+  return { start: isoDate(monday), end: isoDate(sunday) };
+}
+
+/* Calcula, para esta persona y este día, qué tipo de token le tocaría usar
+   (o si ya usó ese día esta semana, o si se quedó sin tokens) */
+function tokenStatusFor(userName, dateIso){
+  if(!TOKEN_LIMITED.includes(userName)) return { unlimited:true, allowed:true, type:null };
+  const {start,end} = weekRangeOf(dateIso);
+  const mine = bookingsList.filter(b=>b.userName===userName && b.date>=start && b.date<=end);
+  const dayType = {};
+  mine.forEach(b=>{ if(!dayType[b.date]) dayType[b.date] = b.token_type || 'extra'; });
+  const fijoUsed = Object.values(dayType).filter(t=>t==='fijo').length;
+  const extraUsed = Object.values(dayType).filter(t=>t==='extra').length;
+  if(dayType[dateIso]){ return { unlimited:false, allowed:true, type:dayType[dateIso], alreadyClaimed:true, fijoUsed, extraUsed }; }
+  if(fijoUsed < FIJO_PER_WEEK) return { unlimited:false, allowed:true, type:'fijo', fijoUsed, extraUsed };
+  if(extraUsed < EXTRA_PER_WEEK) return { unlimited:false, allowed:true, type:'extra', fijoUsed, extraUsed };
+  return { unlimited:false, allowed:false, fijoUsed, extraUsed };
+}
+
+function tokenSummaryHtml(userName, referenceDateIso){
+  if(!TOKEN_LIMITED.includes(userName)) return '';
+  const {start,end} = weekRangeOf(referenceDateIso);
+  const mine = bookingsList.filter(b=>b.userName===userName && b.date>=start && b.date<=end);
+  const dayType = {};
+  mine.forEach(b=>{ if(!dayType[b.date]) dayType[b.date] = b.token_type || 'extra'; });
+  const fijoUsed = Object.values(dayType).filter(t=>t==='fijo').length;
+  const extraUsed = Object.values(dayType).filter(t=>t==='extra').length;
+  return `<p class="access-hint">Esta semana: <strong style="color:var(--ink);">${fijoUsed}/${FIJO_PER_WEEK}</strong> fijos · <strong style="color:var(--ink);">${extraUsed}/${EXTRA_PER_WEEK}</strong> extra usados.</p>`;
 }
 
 async function setSessionFromUser(user){
@@ -621,19 +845,18 @@ async function setSessionFromUser(user){
 }
 
 async function loadDomainData(){
-  const [{data:sp}, {data:fx}, {data:bk}, {data:profs}] = await Promise.all([
+  const [{data:sp}, {data:bk}, {data:profs}] = await Promise.all([
     sb.from('spaces').select('*'),
-    sb.from('fixed_schedule').select('*'),
     sb.from('bookings').select('*'),
     sb.from('profiles').select('*')
   ]);
   spacesList = sp || [];
   const nameOf = id => { const p=(profs||[]).find(x=>x.id===id); return p?p.name:'—'; };
-  fixedScheduleList = (fx||[]).map(f=>({...f, userName:nameOf(f.user_id)}));
   bookingsList = (bk||[]).map(b=>({...b, userName:nameOf(b.user_id)}));
 }
 
 async function initAccess(){
+  if(!sb) return;
   const { data:{ session: sbSession } } = await sb.auth.getSession();
   if(sbSession){ await setSessionFromUser(sbSession.user); }
   await loadDomainData();
@@ -667,9 +890,11 @@ function renderAccess(){
       <div class="session-name">${escapeHtml(session.name)}</div>
       <button class="small-btn" id="acc-logout">Salir</button>
     </div>
+    ${tokenSummaryHtml(session.name, calSelected || isoDate(new Date()))}
     <div class="legend-row">
-      <span><span class="legend-dot fijo"></span>Fijo</span>
-      <span><span class="legend-dot extra"></span>Extra</span>
+      <span><span class="legend-dot" style="background:${colorFor('HDMI')}"></span>HDMI</span>
+      <span><span class="legend-dot" style="background:${colorFor('DEPAUL TATTOO')}"></span>DePaul</span>
+      <span><span class="legend-dot" style="background:${colorFor('INNIT COMPANY')}"></span>INNIT</span>
     </div>
     <div class="month-nav">
       <div class="month-title">${MONTH_NAMES[calMonth.getMonth()]} ${calMonth.getFullYear()}</div>
@@ -711,11 +936,8 @@ function renderCalGrid(){
   grid.innerHTML = cells.map(c=>{
     const iso = isoDate(c.date);
     const dow = mondayIndex(c.date);
-    const fixedCount = fixedScheduleList.filter(f=>f.day_of_week===dow).length;
-    const extraCount = bookingsList.filter(b=>b.date===iso).length;
-    const markers = [];
-    for(let i=0;i<Math.min(fixedCount,4);i++) markers.push('<span class="cal-marker fijo"></span>');
-    for(let i=0;i<Math.min(extraCount,4);i++) markers.push('<span class="cal-marker extra"></span>');
+    const dayEntries = bookingsList.filter(b=>b.date===iso);
+    const markers = dayEntries.slice(0,8).map(e=>`<span class="cal-marker" style="background:${colorFor(e.userName)}"></span>`);
     return `<div class="cal-cell ${c.outside?'outside':''} ${iso===todayIso?'today':''} ${iso===calSelected?'selected':''}" data-date="${iso}">
       <div class="cal-date">${c.date.getDate()}</div>
       <div class="cal-markers">${markers.join('')}</div>
@@ -735,21 +957,22 @@ function renderDayDetail(){
 
   box.innerHTML = `<div class="day-detail"><div class="section-label">${label}</div>` +
     spacesList.map(sp=>{
-      const fixed = fixedScheduleList.filter(f=>f.space_id===sp.id && f.day_of_week===dow);
-      const extra = bookingsList.filter(b=>b.space_id===sp.id && b.date===calSelected);
-      const all = [...fixed.map(f=>({...f,kind:'fijo',who:f.userName})), ...extra.map(b=>({...b,kind:'extra',who:b.userName}))];
-      const rows = all.length ? all.map(s=>`
+      const all = bookingsList.filter(b=>b.space_id===sp.id && b.date===calSelected);
+      const rows = all.length ? all.map(s=>{
+        const kind = s.token_type || (TOKEN_LIMITED.includes(s.userName) ? 'extra' : null);
+        return `
         <div class="slot-row">
           <span class="slot-time">${pad(s.start_hour)}–${pad(s.end_hour)}</span>
-          <span class="slot-tag ${s.kind}">${s.kind==='fijo'?'Fijo':'Extra'}</span>
-          <span>${escapeHtml(s.who)}</span>
-          ${s.kind==='extra' && s.user_id===session.id ? `<button class="remove-x" data-cancel="${s.id}" title="Cancelar">✕</button>` : ''}
-        </div>`).join('') : `<div class="slot-row">Libre todo el día</div>`;
+          ${kind ? `<span class="slot-tag" style="background:${colorFor(s.userName)}2e;color:${colorFor(s.userName)};">${kind==='fijo'?'Fijo':'Extra'}</span>` : `<span class="slot-tag" style="background:${colorFor(s.userName)}2e;color:${colorFor(s.userName)};">Puntual</span>`}
+          <span>${escapeHtml(s.userName)}</span>
+          ${s.user_id===session.id ? `<button class="remove-x" data-cancel="${s.id}" title="Cancelar">✕</button>` : ''}
+        </div>`;
+      }).join('') : `<div class="slot-row">Libre todo el día</div>`;
       return `<div class="space-block" data-space="${sp.id}">
         <div class="space-name">${escapeHtml(sp.name)}</div>
         ${rows}
         <div id="add-${sp.id}"></div>
-        <button class="small-btn" data-add="${sp.id}" style="margin-top:6px;">+ Reservar extra</button>
+        <button class="small-btn" data-add="${sp.id}" style="margin-top:6px;">+ Reservar</button>
       </div>`;
     }).join('') + `</div>`;
 
@@ -758,7 +981,7 @@ function renderDayDetail(){
       const id = btn.getAttribute('data-cancel');
       await sb.from('bookings').delete().eq('id', id);
       await loadDomainData();
-      renderDayDetail(); renderCalGrid();
+      renderAccess();
     });
   });
 
@@ -768,7 +991,18 @@ function renderDayDetail(){
       const holder = document.getElementById('add-'+spaceId);
       if(holder.dataset.open==='1'){ holder.innerHTML=''; holder.dataset.open='0'; return; }
       holder.dataset.open='1';
+
+      const status = tokenStatusFor(session.name, calSelected);
+      if(!status.allowed){
+        holder.innerHTML = `<div class="form-error" style="display:block;">Ya usaste tus 7 días disponibles esta semana (2 fijos + 5 extra).</div>`;
+        return;
+      }
+      const note = status.unlimited ? '' :
+        status.alreadyClaimed ? `<div class="access-hint">Ya tenías este día reservado (${status.type==='fijo'?'fijo':'extra'}) — esto se suma sin gastar otro token.</div>` :
+        `<div class="access-hint">Esta reserva usará ${status.type==='fijo'?'un token FIJO':'un token EXTRA'} de tu semana.</div>`;
+
       holder.innerHTML = `
+        ${note}
         <div class="add-row">
           <select class="add-start">${HOURS.slice(0,-1).map(h=>`<option value="${h}">${pad(h)}:00</option>`).join('')}</select>
           <span style="font-size:11px;color:var(--ink-dim);">a</span>
@@ -780,13 +1014,14 @@ function renderDayDetail(){
         const s = parseInt(holder.querySelector('.add-start').value,10);
         const e = parseInt(holder.querySelector('.add-end').value,10);
         const err = holder.querySelector('.form-error');
-        const dow2 = mondayIndex(new Date(calSelected+'T00:00:00'));
         if(e<=s){ err.style.display='block'; err.textContent='La hora de fin debe ser posterior a la de inicio.'; return; }
-        if(conflictsFor(spaceId, calSelected, dow2, s, e)){ err.style.display='block'; err.textContent='Ese horario ya está ocupado.'; return; }
-        const { error } = await sb.from('bookings').insert({ user_id: session.id, space_id: spaceId, date: calSelected, start_hour: s, end_hour: e });
+        if(conflictsFor(spaceId, calSelected, s, e)){ err.style.display='block'; err.textContent='Ese horario ya está ocupado.'; return; }
+        const freshStatus = tokenStatusFor(session.name, calSelected);
+        if(!freshStatus.allowed){ err.style.display='block'; err.textContent='Ya no te quedan tokens esta semana.'; return; }
+        const { error } = await sb.from('bookings').insert({ user_id: session.id, space_id: spaceId, date: calSelected, start_hour: s, end_hour: e, token_type: freshStatus.type });
         if(error){ err.style.display='block'; err.textContent='No se pudo guardar: '+error.message; return; }
         await loadDomainData();
-        renderDayDetail(); renderCalGrid();
+        renderAccess();
       });
     });
   });
