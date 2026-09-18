@@ -265,7 +265,17 @@ body{
 .access-hint{font-size:11.5px;color:var(--ink-dim);line-height:1.5;margin-top:6px;}
 .link-line{background:none;border:none;color:var(--ink-dim);font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.04em;text-decoration:underline;cursor:pointer;padding:0;margin-top:14px;text-transform:uppercase;}
 .session-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-.session-name{font-size:13px;font-weight:600;}
+.session-name{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.session-dot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 8px currentColor;}
+
+.token-panel{
+  display:flex;gap:22px;margin:12px 0 10px;padding:12px 14px;
+  border-radius:10px;border:1px solid;
+}
+.token-group-label{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.06em;color:var(--ink-dim);margin-bottom:7px;text-transform:uppercase;}
+.token-pips{display:flex;gap:5px;}
+.token-pip{width:15px;height:15px;border-radius:4px;transition:all 0.3s var(--ease);}
+.token-pip.used{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);}
 .small-btn{background:none;border:1px solid var(--hairline);color:var(--ink-dim);font-family:'Geist Mono',monospace;font-size:10px;padding:5px 10px;border-radius:6px;cursor:pointer;text-transform:uppercase;letter-spacing:0.04em;}
 .small-btn:hover{border-color:var(--ink);color:var(--ink);}
 
@@ -284,7 +294,7 @@ body{
 .cal-head div{font-size:8.5px;color:var(--ink-dim);text-align:center;text-transform:uppercase;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
 .cal-cell{
-  min-height:38px;border:1px solid rgba(255,255,255,0.08);border-radius:5px;
+  min-height:48px;border:1px solid rgba(255,255,255,0.08);border-radius:6px;
   padding:3px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;
   transition:background 0.15s var(--ease);
 }
@@ -836,7 +846,15 @@ function tokenSummaryHtml(userName, referenceDateIso){
   mine.forEach(b=>{ if(!dayType[b.date]) dayType[b.date] = b.token_type || 'extra'; });
   const fijoUsed = Object.values(dayType).filter(t=>t==='fijo').length;
   const extraUsed = Object.values(dayType).filter(t=>t==='extra').length;
-  return `<p class="access-hint">Esta semana: <strong style="color:var(--ink);">${fijoUsed}/${FIJO_PER_WEEK}</strong> fijos · <strong style="color:var(--ink);">${extraUsed}/${EXTRA_PER_WEEK}</strong> extra usados.</p>`;
+  const color = colorFor(userName);
+  const pip = (used) => `<span class="token-pip ${used?'used':''}" style="${used?'':`background:${color};box-shadow:0 0 8px ${color};`}"></span>`;
+  const fijoPips = Array.from({length:FIJO_PER_WEEK}, (_,i)=>pip(i<fijoUsed)).join('');
+  const extraPips = Array.from({length:EXTRA_PER_WEEK}, (_,i)=>pip(i<extraUsed)).join('');
+  return `
+    <div class="token-panel" style="background:${color}14;border-color:${color}44;">
+      <div><div class="token-group-label">Fijos · ${FIJO_PER_WEEK-fijoUsed} libres</div><div class="token-pips">${fijoPips}</div></div>
+      <div><div class="token-group-label">Extra · ${EXTRA_PER_WEEK-extraUsed} libres</div><div class="token-pips">${extraPips}</div></div>
+    </div>`;
 }
 
 async function setSessionFromUser(user){
@@ -887,7 +905,7 @@ function renderAccess(){
 
   root.innerHTML = `
     <div class="session-row">
-      <div class="session-name">${escapeHtml(session.name)}</div>
+      <div class="session-name"><span class="session-dot" style="background:${colorFor(session.name)};color:${colorFor(session.name)};"></span>${escapeHtml(session.name)}</div>
       <button class="small-btn" id="acc-logout">Salir</button>
     </div>
     ${tokenSummaryHtml(session.name, calSelected || isoDate(new Date()))}
