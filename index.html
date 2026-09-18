@@ -3,7 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNIT COMPANY</title>
+<title>INNIT COMPANY — Productora audiovisual y agencia de marketing</title>
+<meta name="description" content="Productora audiovisual y agencia de marketing con sede en Madrid. El espacio creativo que necesitas para llevar a cabo tus proyectos y hacerlos realidad.">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<meta property="og:title" content="INNIT COMPANY">
+<meta property="og:description" content="Productora audiovisual y agencia de marketing con sede en Madrid. El espacio creativo que necesitas para llevar a cabo tus proyectos y hacerlos realidad.">
+<meta property="og:image" content="og-image.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="INNIT COMPANY">
+<meta name="twitter:description" content="Productora audiovisual y agencia de marketing con sede en Madrid.">
+<meta name="twitter:image" content="og-image.jpg">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -432,8 +447,8 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
     <div class="section" data-section="home">
       <div class="section-label">ESPACIO CREATIVO</div>
       <p style="font-size:13px;line-height:1.6;color:var(--ink);margin:0 0 4px;">
-        Productora audiovisual y agencia de marketing con sede en Madrid.
-        Rodamos, editamos y lanzamos — todo desde el mismo equipo.
+        Productora audiovisual y agencia de marketing con sede en Madrid.<br>
+        El espacio creativo que necesitas para llevar a cabo tus proyectos y hacerlos realidad.
       </p>
     </div>
 
@@ -962,7 +977,7 @@ function renderCalGrid(){
     </div>`;
   }).join('');
   grid.querySelectorAll('.cal-cell:not(.outside)').forEach(cell=>{
-    cell.addEventListener('click', ()=>{ calSelected = cell.dataset.date; renderCalGrid(); renderDayDetail(); });
+    cell.addEventListener('click', ()=>{ calSelected = cell.dataset.date; renderAccess(); });
   });
 }
 
@@ -996,6 +1011,7 @@ function renderDayDetail(){
 
   box.querySelectorAll('[data-cancel]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
+      if(!confirm('¿Seguro que quieres cancelar esta reserva?')) return;
       const id = btn.getAttribute('data-cancel');
       await sb.from('bookings').delete().eq('id', id);
       await loadDomainData();
