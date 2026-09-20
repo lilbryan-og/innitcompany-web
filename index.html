@@ -59,9 +59,23 @@ body{
 #bg-about{background:
   radial-gradient(circle at 40% 30%, #ffd9a8 0%, #e8823f 40%, #4a1608 78%, #140502 100%);
 }
-#bg-call{background:
-  radial-gradient(ellipse at 45% 60%, rgba(207,232,255,0.5), transparent 60%),
-  linear-gradient(200deg, #04070a 0%, #0f2233 45%, #274257 80%, #4d7590 100%);
+#bg-call{
+  background:radial-gradient(circle at 50% 50%, #161616 0%, #0a0a0a 55%, #000 100%);
+  overflow:hidden;
+}
+#bg-call::before,#bg-call::after{
+  content:'';position:absolute;inset:-25%;
+  background:radial-gradient(circle at 50% 45%, rgba(190,190,190,0.16) 0%, rgba(190,190,190,0) 62%);
+  animation:callPulse 6s ease-in-out infinite;
+}
+#bg-call::after{
+  background:radial-gradient(circle at 55% 60%, rgba(160,160,160,0.1) 0%, rgba(160,160,160,0) 55%);
+  animation-duration:8.5s;
+  animation-delay:-3s;
+}
+@keyframes callPulse{
+  0%,100%{opacity:0.45;transform:scale(0.9);}
+  50%{opacity:1;transform:scale(1.1);}
 }
 #bg-salas{background:
   radial-gradient(circle at 50% 40%, #4a4640 0%, #2a2724 45%, #100f0d 80%, #030302 100%);
@@ -484,10 +498,7 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
     <!-- HOME -->
     <div class="section" data-section="home">
       <div class="section-label">ESPACIO CREATIVO</div>
-      <p style="font-size:13px;line-height:1.6;color:var(--ink);margin:0 0 4px;">
-        Productora audiovisual y agencia de marketing con sede en Madrid.<br>
-        El espacio creativo que necesitas para llevar a cabo tus proyectos y hacerlos realidad.
-      </p>
+      <p style="font-size:13px;line-height:1.6;color:var(--ink);margin:0 0 4px;">Productora audiovisual y agencia de marketing con sede en Madrid. El espacio creativo que necesitas para llevar a cabo tus proyectos y convertir en realidad tus ideas.</p>
     </div>
 
     <!-- WORK -->
