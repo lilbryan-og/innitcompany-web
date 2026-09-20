@@ -91,23 +91,8 @@ body{
 
 .dock-row{display:flex;gap:10px;align-items:center;animation:rise 0.55s var(--ease) both;}
 .dock-row .access-btn{animation:none;}
-.whatsapp-btn:hover{background:linear-gradient(180deg, rgba(37,211,102,0.5) 0%, rgba(37,211,102,0.25) 60%, rgba(37,211,102,0.12) 100%);color:#25d366;}
-
-.work-contact-btn{
-  position:fixed;right:20px;bottom:20px;z-index:6;
-  display:none;align-items:center;gap:7px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.16) 60%, rgba(255,255,255,0.08) 100%);
-  border:1px solid var(--panel-border);
-  backdrop-filter:blur(24px) saturate(185%);
-  -webkit-backdrop-filter:blur(24px) saturate(185%);
-  color:var(--ink);text-decoration:none;
-  padding:9px 16px;border-radius:999px;
-  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.05em;
-  box-shadow:0 8px 24px rgba(0,0,0,0.3);
-  transition:transform 0.25s var(--ease), background 0.25s var(--ease);
-  overflow:hidden;
-}
-.work-contact-btn::after{
+.whatsapp-btn{position:relative;overflow:hidden;}
+.whatsapp-btn::after{
   content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
   background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
   transform:skewX(-20deg);
@@ -118,8 +103,7 @@ body{
   35%{left:130%;}
   100%{left:130%;}
 }
-.work-contact-btn:hover{transform:translateY(-2px);background:linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.22) 60%, rgba(255,255,255,0.12) 100%);}
-.work-contact-btn.show{display:flex;}
+.whatsapp-btn:hover{background:linear-gradient(180deg, rgba(37,211,102,0.5) 0%, rgba(37,211,102,0.25) 60%, rgba(37,211,102,0.12) 100%);color:#25d366;}
 
 /* Modal Privacidad/Cookies — blanco y negro, sin color, la web queda detrás */
 .legal-overlay{
@@ -199,14 +183,33 @@ body{
   -webkit-backdrop-filter:blur(24px) saturate(185%);
   display:flex;align-items:center;justify-content:center;
   color:#fff;cursor:pointer;
-  transition:transform 0.3s var(--ease), background 0.3s var(--ease), box-shadow 0.3s var(--ease), color 0.3s var(--ease);
+  transition:background 0.3s var(--ease), box-shadow 0.3s var(--ease), color 0.3s var(--ease);
 }
 .home-close-btn:hover{
-  transform:scale(1.18) rotate(90deg);
   background:linear-gradient(180deg, rgba(255,70,70,1) 0%, rgba(220,20,20,0.96) 100%);
   box-shadow:0 0 16px rgba(255,60,60,0.6);
   color:#fff;
 }
+.home-close-icon{display:flex;align-items:center;justify-content:center;width:100%;height:100%;transition:transform 0.3s var(--ease);}
+.home-close-btn:hover .home-close-icon{transform:scale(1.18) rotate(90deg);}
+.home-close-tip{
+  position:absolute;top:50%;right:calc(100% + 10px);transform:translateY(-50%) translateX(4px);
+  background:rgba(10,10,12,0.92);color:#fff;
+  font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.06em;text-transform:uppercase;
+  padding:5px 9px;border-radius:6px;white-space:nowrap;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.home-close-tip::after{
+  content:'';position:absolute;top:50%;left:100%;transform:translateY(-50%);
+  border:4px solid transparent;border-left-color:rgba(10,10,12,0.92);
+}
+.home-close-btn:hover .home-close-tip{opacity:1;transform:translateY(-50%) translateX(0);}
+@keyframes closeBtnPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(230,48,48,0.65);}
+  50%{box-shadow:0 0 0 9px rgba(230,48,48,0);}
+}
+.home-close-btn.attention{animation:closeBtnPulse 1.1s ease-out 3;}
 
 /* ============================================
    SALAS — página aparte, estética propia (clara),
@@ -223,6 +226,7 @@ body{
   padding:28px 32px;position:sticky;top:0;background:#eeece7;z-index:2;
 }
 .salas-brand{font-family:'Geist Mono',monospace;font-size:11px;line-height:1.6;text-transform:uppercase;letter-spacing:0.04em;}
+.salas-logo{height:15px;width:auto;display:inline-block;margin-bottom:5px;}
 .salas-back{
   background:none;border:1px solid #14141433;color:#141414;border-radius:999px;
   padding:7px 16px;font-family:'Geist Mono',monospace;font-size:10px;text-transform:uppercase;
@@ -288,6 +292,7 @@ body{
 
 .panel-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--hairline);}
 .logo{font-size:26px;line-height:1;white-space:nowrap;}
+img.logo{height:22px;width:auto;display:block;}
 .tagline{font-size:10.5px;line-height:1.5;color:var(--ink-dim);text-align:right;max-width:220px;}
 
 .nav{display:flex;justify-content:space-between;gap:4px;padding:14px 0;border-bottom:1px solid var(--hairline);}
@@ -441,7 +446,11 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
     <source src="home_bg.mp4" type="video/mp4">
   </video>
 </div>
-<div class="bg-layer" id="bg-work"></div>
+<div class="bg-layer" id="bg-work">
+  <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;">
+    <source src="home_bg.mp4" type="video/mp4">
+  </video>
+</div>
 <div class="bg-layer" id="bg-about"></div>
 <div class="bg-layer" id="bg-call"></div>
 <div class="bg-layer" id="bg-salas"></div>
@@ -454,12 +463,15 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 
 <div class="stage">
   <div class="panel" id="panel">
-    <button class="home-close-btn" id="home-close-btn" aria-label="???" title="">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 4l16 16M20 4L4 20"/></svg>
+    <button class="home-close-btn" id="home-close-btn" aria-label="Ver el espacio">
+      <span class="home-close-icon">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 4l16 16M20 4L4 20"/></svg>
+      </span>
+      <span class="home-close-tip">VER ESPACIO</span>
     </button>
 
     <div class="panel-header">
-      <div class="logo display">INNIT COMPANY</div>
+      <img class="logo display" src="logo-innit-white.png" alt="INNIT COMPANY">
     </div>
 
     <div class="nav">
@@ -560,7 +572,7 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 <!-- SALAS — página propia, a pantalla completa, estética distinta al resto -->
 <div class="salas-page" id="salas-page">
   <div class="salas-top">
-    <div class="salas-brand">INNIT COMPANY<br>SALAS</div>
+    <div class="salas-brand"><img src="logo-innit-dark.png" alt="INNIT COMPANY" class="salas-logo"><br>SALAS</div>
     <button class="salas-back" id="salas-back">VOLVER</button>
   </div>
   <div class="salas-body">
@@ -570,11 +582,6 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
     <div class="salas-grid" id="salas-grid-p1"></div>
   </div>
 </div>
-
-<a class="work-contact-btn" id="work-contact-btn" href="https://wa.link/rbmuk8" target="_blank" rel="noopener">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.34a9.87 9.87 0 0 0 4.62 1.15h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.51 2 12.04 2zm0 18.02h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.03-.2-.31a8.2 8.2 0 0 1-1.26-4.35c0-4.52 3.68-8.2 8.21-8.2 2.19 0 4.25.85 5.8 2.4a8.14 8.14 0 0 1 2.4 5.8c0 4.53-3.68 8.19-8.18 8.19z"/></svg>
-  CONTACTAR
-</a>
 
 <div class="cookie-banner" id="cookie-banner">
   <p>Usamos únicamente almacenamiento técnico necesario (por ejemplo, para mantener tu sesión iniciada en el área privada). No usamos cookies de analítica ni publicidad. Más info en <a href="#" id="link-cookies-banner">Cookies</a>.</p>
@@ -644,8 +651,14 @@ PROJECTS.forEach(p=>{
     if(p.video){ p._videoEl.classList.remove('showing'); p._videoEl.pause(); }
   }
 
-  tr.addEventListener('mouseenter', showRow);
-  tr.addEventListener('mouseleave', hideRow);
+  // En ratón de verdad usamos hover; en táctil (móvil/tablet) no hay hover real,
+  // así que ahí solo se controla con el toque (evita el parpadeo de que el
+  // "hover" sintético del móvil dispare showRow() y el click lo apague acto seguido).
+  const hasRealHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(hasRealHover){
+    tr.addEventListener('mouseenter', showRow);
+    tr.addEventListener('mouseleave', hideRow);
+  }
   tr.addEventListener('click', (e)=>{
     e.preventDefault();
     if(tr.classList.contains('hovered')){ hideRow(); } else { showRow(); }
@@ -671,7 +684,6 @@ function goTo(tab){
     bgHover.classList.remove('active');
     document.getElementById('access-btn').classList.toggle('active', tab==='login');
     document.getElementById('home-close-btn').style.display = (tab==='home') ? 'flex' : 'none';
-    document.getElementById('work-contact-btn').classList.toggle('show', tab==='work');
     if(tab==='login'){ renderAccess(); }
     if(tab==='work'){ preloadWorkVideos(); }
     requestAnimationFrame(()=> cutOverlay.classList.remove('active') );
@@ -1136,6 +1148,17 @@ function renderDayDetail(){
 }
 
 initAccess();
+
+/* Llamamos la atención sobre la X una vez, al cargar la web, para que la
+   gente sepa que ahí hay algo que ver (el espacio físico) */
+(function(){
+  const btn = document.getElementById('home-close-btn');
+  if(!btn) return;
+  setTimeout(()=>{
+    btn.classList.add('attention');
+    setTimeout(()=>btn.classList.remove('attention'), 3400);
+  }, 1400);
+})();
 </script>
 </body>
 </html>
