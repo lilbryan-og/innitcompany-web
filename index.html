@@ -89,6 +89,10 @@ body{
 .access-btn:hover{background:linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.22) 60%, rgba(255,255,255,0.1) 100%);}
 .access-btn.active{background:var(--ink);color:#0c0b0f;}
 
+.dock-row{display:flex;gap:10px;align-items:center;animation:rise 0.55s var(--ease) both;}
+.dock-row .access-btn{animation:none;}
+.whatsapp-btn:hover{background:linear-gradient(180deg, rgba(37,211,102,0.5) 0%, rgba(37,211,102,0.25) 60%, rgba(37,211,102,0.12) 100%);color:#25d366;}
+
 .work-contact-btn{
   position:fixed;right:20px;bottom:20px;z-index:6;
   display:none;align-items:center;gap:7px;
@@ -139,6 +143,27 @@ body{
 .legal-card h2{font-size:13px;margin-top:26px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#fff;}
 .legal-card p,.legal-card li{font-size:13px;color:#ccc;line-height:1.65;}
 .legal-card a{color:#fff;text-decoration:underline;}
+
+/* aviso de cookies — informativo, no bloqueante */
+.cookie-banner{
+  position:fixed;left:16px;right:16px;bottom:16px;z-index:90;
+  max-width:520px;margin:0 auto;
+  display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.08) 100%);
+  border:1px solid var(--panel-border);border-radius:14px;
+  backdrop-filter:blur(24px) saturate(185%);-webkit-backdrop-filter:blur(24px) saturate(185%);
+  padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.35);
+  opacity:0;transform:translateY(12px);pointer-events:none;
+  transition:opacity 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.cookie-banner.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.cookie-banner p{font-size:11.5px;line-height:1.5;color:var(--ink-dim);margin:0;flex:1 1 240px;}
+.cookie-banner a{color:var(--ink);text-decoration:underline;}
+.cookie-banner button{
+  background:var(--ink);color:#0c0b0f;border:none;border-radius:8px;
+  padding:8px 14px;font-size:10.5px;font-family:'Geist Mono',monospace;
+  text-transform:uppercase;letter-spacing:0.04em;cursor:pointer;flex:0 0 auto;
+}
 
 /* tarjetas de sala */
 .room-card{
@@ -328,7 +353,8 @@ body{
 .slot-time{font-family:'Geist Mono',monospace;color:var(--ink);min-width:76px;}
 .slot-tag{font-size:9px;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:0.03em;}
 .add-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;align-items:center;}
-.add-row select{background:rgba(255,255,255,0.06);border:1px solid var(--hairline);color:var(--ink);border-radius:5px;padding:5px;font-size:11px;font-family:'Geist Mono',monospace;}
+.add-row select{background:rgba(255,255,255,0.06);border:1px solid var(--hairline);color:var(--ink);border-radius:5px;padding:5px 8px;font-size:11px;font-family:'Geist Mono',monospace;color-scheme:dark;cursor:pointer;}
+.add-row select:focus{outline:1px solid rgba(255,255,255,0.4);}
 .mini-btn{background:var(--ink);color:#0c0b0f;border:none;border-radius:5px;padding:5px 10px;font-size:10px;font-family:'Geist Mono',monospace;cursor:pointer;text-transform:uppercase;}
 .form-error{color:#ff8080;font-size:10.5px;margin-top:5px;}
 
@@ -440,7 +466,7 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
       <button data-tab="home" class="active">HOME</button>
       <button data-tab="work">WORK</button>
       <button data-tab="about">ABOUT</button>
-      <button data-tab="call">CALL</button>
+      <button data-tab="call">CONTACTO</button>
     </div>
 
     <!-- HOME -->
@@ -484,9 +510,9 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
       <button class="btn" data-goto="call">CONTACTAR</button>
     </div>
 
-    <!-- CALL -->
+    <!-- CALL / CONTACTO -->
     <div class="section" data-section="call" style="display:none;">
-      <div class="section-label">CALL</div>
+      <div class="section-label">CONTACTO</div>
       <form name="contacto" id="call-form" data-netlify="true" data-netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="contacto" />
         <p style="display:none;"><label>No rellenar: <input name="bot-field" /></label></p>
@@ -494,8 +520,12 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
         <input class="field" id="f-email" name="email" type="email" placeholder="EMAIL" required />
         <textarea class="field" id="f-text" name="mensaje" placeholder="MENSAJE" required></textarea>
         <label class="consent-row">
-          <input type="checkbox" id="f-consent" />
+          <input type="checkbox" id="f-consent" name="consentimiento" />
           <span>He leído y acepto la <a href="#" id="link-privacidad-2">Política de Privacidad</a>.</span>
+        </label>
+        <label class="consent-row">
+          <input type="checkbox" id="f-marketing" name="marketing" />
+          <span>Quiero recibir novedades y ofertas de INNIT COMPANY por email (opcional, puedes darte de baja cuando quieras).</span>
         </label>
         <button class="btn" type="submit" id="send-btn" disabled>ENVIAR</button>
         <div class="form-sent" id="form-sent">¡Mensaje enviado! Te contestamos en cuanto podamos.</div>
@@ -517,9 +547,14 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 
   </div>
 
-  <button class="access-btn" id="access-btn" aria-label="Acceso privado" title="Acceso equipo">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-  </button>
+  <div class="dock-row">
+    <button class="access-btn" id="access-btn" aria-label="Acceso privado" title="Acceso equipo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+    </button>
+    <a class="access-btn whatsapp-btn" id="whatsapp-dock-btn" href="https://wa.link/rbmuk8" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp" title="Contactar por WhatsApp">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.34a9.87 9.87 0 0 0 4.62 1.15h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.51 2 12.04 2zm0 18.02h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.03-.2-.31a8.2 8.2 0 0 1-1.26-4.35c0-4.52 3.68-8.2 8.21-8.2 2.19 0 4.25.85 5.8 2.4a8.14 8.14 0 0 1 2.4 5.8c0 4.53-3.68 8.19-8.18 8.19z"/></svg>
+    </a>
+  </div>
 </div>
 
 <!-- SALAS — página propia, a pantalla completa, estética distinta al resto -->
@@ -540,6 +575,11 @@ textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.34a9.87 9.87 0 0 0 4.62 1.15h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.51 2 12.04 2zm0 18.02h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.03-.2-.31a8.2 8.2 0 0 1-1.26-4.35c0-4.52 3.68-8.2 8.21-8.2 2.19 0 4.25.85 5.8 2.4a8.14 8.14 0 0 1 2.4 5.8c0 4.53-3.68 8.19-8.18 8.19z"/></svg>
   CONTACTAR
 </a>
+
+<div class="cookie-banner" id="cookie-banner">
+  <p>Usamos únicamente almacenamiento técnico necesario (por ejemplo, para mantener tu sesión iniciada en el área privada). No usamos cookies de analítica ni publicidad. Más info en <a href="#" id="link-cookies-banner">Cookies</a>.</p>
+  <button id="cookie-ack-btn">Entendido</button>
+</div>
 
 <div class="legal-overlay" id="legal-overlay">
   <div class="legal-card">
@@ -702,10 +742,23 @@ document.getElementById('call-form').addEventListener('submit', function(e){
   errBox.style.display = 'none';
   btn.disabled = true;
   btn.textContent = 'ENVIANDO...';
-  const data = new URLSearchParams(new FormData(form)).toString();
+  const fd = new FormData(form);
+  const data = new URLSearchParams(fd).toString();
   fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:data })
     .then(()=>{
       document.getElementById('form-sent').style.display = 'block';
+      // Guardamos el lead en Supabase solo si dio consentimiento de marketing,
+      // para poder usarlo en email marketing en el futuro respetando el RGPD.
+      try{
+        if(sb && document.getElementById('f-marketing').checked){
+          sb.from('contact_leads').insert({
+            nombre: fd.get('nombre'),
+            email: fd.get('email'),
+            marketing_consent: true,
+            consent_at: new Date().toISOString()
+          }).then(()=>{}).catch(()=>{});
+        }
+      }catch(e){}
       form.reset();
       btn.textContent = 'ENVIAR';
     })
@@ -726,13 +779,16 @@ const LEGAL_TEXTS = {
     <p>Tratamos tus datos conforme a los principios de licitud, lealtad y transparencia; limitación de la finalidad; minimización de datos; exactitud; limitación del plazo de conservación; e integridad y confidencialidad.</p>
 
     <h2>¿Qué datos recogemos?</h2>
-    <p>— A través del formulario de contacto (CALL): nombre, email y el mensaje que nos envíes.<br>— A través del área privada de reservas: email y los datos de las reservas del espacio, exclusivamente de las personas con cuenta autorizada para colaborar habitualmente con el espacio.</p>
+    <p>— A través del formulario de contacto (CONTACTO): nombre, email y el mensaje que nos envíes.<br>— Si marcas la casilla correspondiente en ese mismo formulario: tu email, para enviarte novedades comerciales de INNIT COMPANY.<br>— A través del área privada de reservas: email y los datos de las reservas del espacio, exclusivamente de las personas con cuenta autorizada para colaborar habitualmente con el espacio.</p>
 
     <h2>¿Para qué los usamos?</h2>
-    <p>— Responder a tus consultas y solicitudes de información.<br>— Gestionar de forma interna las reservas del espacio entre el equipo autorizado.<br>No usamos tus datos con fines publicitarios ni los cedemos a terceros para ese fin.</p>
+    <p>— Responder a tus consultas y solicitudes de información.<br>— Gestionar de forma interna las reservas del espacio entre el equipo autorizado.<br>— Si marcaste voluntariamente la casilla de comunicaciones comerciales, enviarte novedades, promociones o contenido comercial de INNIT COMPANY por email.<br>No cedemos tus datos a terceros con fines publicitarios ni los utilizamos para ningún fin distinto de los aquí descritos.</p>
 
     <h2>Base legal del tratamiento</h2>
-    <p>El consentimiento que nos das al enviar voluntariamente el formulario de contacto, o la relación de colaboración existente con las personas que acceden al área privada.</p>
+    <p>El consentimiento que nos das al enviar voluntariamente el formulario de contacto, o la relación de colaboración existente con las personas que acceden al área privada. En el caso de las comunicaciones comerciales por email, la base legal es tu consentimiento expreso, específico e independiente, marcado de forma separada y nunca premarcada, conforme al artículo 21 de la LSSICE.</p>
+
+    <h2>Comunicaciones comerciales y baja</h2>
+    <p>Si nos diste tu consentimiento para recibir comunicaciones comerciales, puedes retirarlo en cualquier momento y de forma gratuita, sin necesidad de justificación, mediante el enlace de baja incluido en cada email, o escribiéndonos al contacto indicado más abajo. Dejaremos de enviarte comunicaciones comerciales en cuanto procesemos tu solicitud.</p>
 
     <h2>Encargados del tratamiento</h2>
     <p>Para el funcionamiento técnico de la web utilizamos los siguientes proveedores, que actúan como encargados del tratamiento bajo contrato: Supabase (base de datos y autenticación) y Netlify (alojamiento web).</p>
@@ -774,8 +830,8 @@ const LEGAL_TEXTS = {
     <p>Actualmente, este sitio utiliza únicamente almacenamiento técnico estrictamente necesario: cuando una persona autorizada inicia sesión en el área privada de reservas, guardamos de forma segura su sesión para que no tenga que volver a identificarse en cada visita. Lo gestiona nuestro proveedor Supabase.</p>
     <p>No utilizamos cookies de personalización, analítica ni publicidad de terceros.</p>
 
-    <h2>¿Por qué no hay banner de consentimiento?</h2>
-    <p>Conforme al artículo 22.2 de la LSSICE, las cookies estrictamente necesarias para el servicio solicitado por el usuario están exentas de requerir consentimiento previo. Si en el futuro se incorporan cookies de analítica o publicidad, esta política se actualizará y se solicitará el consentimiento correspondiente mediante un banner.</p>
+    <h2>¿Por qué el aviso que ves no pide "aceptar" o "rechazar"?</h2>
+    <p>Conforme al artículo 22.2 de la LSSICE, las cookies estrictamente necesarias para el servicio solicitado por el usuario están exentas de requerir consentimiento previo. Por eso el aviso que aparece al entrar es meramente informativo, no un banner de consentimiento. Si en el futuro se incorporan cookies de analítica o publicidad, esta política se actualizará y se solicitará el consentimiento correspondiente mediante un banner real de aceptación.</p>
 
     <h2>Cómo gestionar las cookies desde tu navegador</h2>
     <p>Puedes eliminar o bloquear las cookies en cualquier momento desde la configuración de tu navegador. Ten en cuenta que bloquear el almacenamiento técnico puede impedir el acceso al área privada de reservas.</p>
@@ -793,6 +849,24 @@ document.getElementById('link-privacidad-2').addEventListener('click', (e)=>{ e.
 document.getElementById('link-cookies').addEventListener('click', (e)=>{ e.preventDefault(); openLegal('cookies'); });
 document.getElementById('legal-close').addEventListener('click', closeLegal);
 legalOverlay.addEventListener('click', (e)=>{ if(e.target.id==='legal-overlay') closeLegal(); });
+
+/* aviso de cookies — informativo, se muestra una vez por visitante */
+(function(){
+  const banner = document.getElementById('cookie-banner');
+  const ackKey = 'innit_cookie_ack';
+  try{
+    if(!localStorage.getItem(ackKey)){
+      setTimeout(()=>banner.classList.add('show'), 900);
+    }
+  }catch(e){ setTimeout(()=>banner.classList.add('show'), 900); }
+  document.getElementById('cookie-ack-btn').addEventListener('click', ()=>{
+    banner.classList.remove('show');
+    try{ localStorage.setItem(ackKey, '1'); }catch(e){}
+  });
+  document.getElementById('link-cookies-banner').addEventListener('click', (e)=>{
+    e.preventDefault(); openLegal('cookies');
+  });
+})();
 
 /* =====================================================
    ACCESO PRIVADO — login + calendario de reservas (Supabase)
