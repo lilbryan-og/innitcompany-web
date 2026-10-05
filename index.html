@@ -449,6 +449,13 @@ img.logo{height:22px;width:auto;display:block;}
 .field::placeholder{color:var(--ink-dim);}
 .field:focus{outline:none;border-bottom-color:var(--ink);}
 textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
+.acc-tabs{display:flex;gap:6px;margin-top:12px;}
+.acc-tabs button{flex:1;background:transparent;border:1px solid var(--hairline);color:var(--ink-dim);border-radius:8px;padding:8px 6px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;transition:background 0.2s var(--ease),color 0.2s var(--ease);}
+.acc-tabs button:hover{color:var(--ink);}
+.acc-tabs button.active{background:var(--ink);color:#0c0b0f;border-color:var(--ink);}
+.team-note{font-size:10.5px;color:var(--ink-dim);}
+.add-row .team-note-input{flex:1 1 100%;background:transparent;border:none;border-bottom:1px solid var(--hairline);color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;}
+.add-row .team-note-input:focus{outline:none;border-bottom-color:var(--ink);}
 .pass-wrap{display:flex;align-items:center;border-bottom:1px solid var(--hairline);margin-top:8px;}
 .pass-wrap:focus-within{border-bottom-color:var(--ink);}
 .pass-wrap .field{border-bottom:none;margin-top:0;flex:1;min-width:0;}
@@ -926,7 +933,12 @@ const HOURS = [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
 const DAY_LABELS = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
 const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const PERSON_COLORS = { 'HDMI':'#4a9eff', 'JOVAEL':'#4ade80', 'INNIT COMPANY':'#d8d8d8' };
-function colorFor(name){ return PERSON_COLORS[name] || '#9C97A6'; }
+const TEAM_COLORS = { 'BRYAN':'#fbbf24', 'LEANDRO':'#a78bfa' };
+const TEAM_PEOPLE = ['BRYAN','LEANDRO'];
+function colorFor(name){ return PERSON_COLORS[name] || TEAM_COLORS[name] || '#9C97A6'; }
+let accTab = 'spaces';       // 'spaces' | 'team'  (team solo para INNIT COMPANY)
+let teamList = [];           // {id,person,date,start_hour,end_hour,note}
+function isTeamUser(){ return session && session.name === 'INNIT COMPANY'; }
 
 let session = null;          // {id, email, name}
 let spacesList = [];
@@ -937,7 +949,9 @@ const MIN_MONTH = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 const MAX_MONTH = new Date(2027, 4, 1); // mayo 2027
 function monthKey(d){ return d.getFullYear()*12 + d.getMonth(); }
 const TOKEN_LIMITED = ['HDMI','JOVAEL']; // INNIT COMPANY queda fuera: sin límite
-const FIJO_PER_WEEK = 2, EXTRA_PER_WEEK = 5;
+// Tokens por semana según la persona (JOVAEL: 1 fijo + 6 extra)
+const ALLOWANCE = { 'HDMI':{fijo:2, extra:5}, 'JOVAEL':{fijo:1, extra:6} };
+function allowanceFor(name){ return ALLOWANCE[name] || {fijo:2, extra:5}; }
 
 function pad(n){ return n.toString().padStart(2,'0'); }
 function isoDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -967,8 +981,9 @@ function tokenStatusFor(userName, dateIso){
   const fijoUsed = Object.values(dayType).filter(t=>t==='fijo').length;
   const extraUsed = Object.values(dayType).filter(t=>t==='extra').length;
   if(dayType[dateIso]){ return { unlimited:false, allowed:true, type:dayType[dateIso], alreadyClaimed:true, fijoUsed, extraUsed }; }
-  if(fijoUsed < FIJO_PER_WEEK) return { unlimited:false, allowed:true, type:'fijo', fijoUsed, extraUsed };
-  if(extraUsed < EXTRA_PER_WEEK) return { unlimited:false, allowed:true, type:'extra', fijoUsed, extraUsed };
+  const al = allowanceFor(userName);
+  if(fijoUsed < al.fijo) return { unlimited:false, allowed:true, type:'fijo', fijoUsed, extraUsed };
+  if(extraUsed < al.extra) return { unlimited:false, allowed:true, type:'extra', fijoUsed, extraUsed };
   return { unlimited:false, allowed:false, fijoUsed, extraUsed };
 }
 
@@ -980,14 +995,15 @@ function tokenSummaryHtml(userName, referenceDateIso){
   mine.forEach(b=>{ if(!dayType[b.date]) dayType[b.date] = b.token_type || 'extra'; });
   const fijoUsed = Object.values(dayType).filter(t=>t==='fijo').length;
   const extraUsed = Object.values(dayType).filter(t=>t==='extra').length;
+  const al = allowanceFor(userName);
   const color = colorFor(userName);
   const pip = (used) => `<span class="token-pip ${used?'used':''}" style="${used?'':`background:${color};box-shadow:0 0 8px ${color};`}"></span>`;
-  const fijoPips = Array.from({length:FIJO_PER_WEEK}, (_,i)=>pip(i<fijoUsed)).join('');
-  const extraPips = Array.from({length:EXTRA_PER_WEEK}, (_,i)=>pip(i<extraUsed)).join('');
+  const fijoPips = Array.from({length:al.fijo}, (_,i)=>pip(i<fijoUsed)).join('');
+  const extraPips = Array.from({length:al.extra}, (_,i)=>pip(i<extraUsed)).join('');
   return `
     <div class="token-panel" style="background:${color}14;border-color:${color}44;">
-      <div><div class="token-group-label">Fijos · ${FIJO_PER_WEEK-fijoUsed} libres</div><div class="token-pips">${fijoPips}</div></div>
-      <div><div class="token-group-label">Extra · ${EXTRA_PER_WEEK-extraUsed} libres</div><div class="token-pips">${extraPips}</div></div>
+      <div><div class="token-group-label">${al.fijo===1?'Día fijo':'Fijos'} · ${al.fijo-fijoUsed} libres</div><div class="token-pips">${fijoPips}</div></div>
+      ${al.extra>0?`<div><div class="token-group-label">Extra · ${al.extra-extraUsed} libres</div><div class="token-pips">${extraPips}</div></div>`:''}
     </div>`;
 }
 
@@ -1005,6 +1021,11 @@ async function loadDomainData(){
   spacesList = sp || [];
   const nameOf = id => { const p=(profs||[]).find(x=>x.id===id); return p?p.name:'—'; };
   bookingsList = (bk||[]).map(b=>({...b, userName:nameOf(b.user_id)}));
+  teamList = [];
+  if(isTeamUser()){
+    const { data: tu } = await sb.from('team_usage').select('*');
+    teamList = tu || [];
+  }
 }
 
 async function initAccess(){
@@ -1055,11 +1076,17 @@ function renderAccess(){
       <div class="session-name"><span class="session-dot" style="background:${colorFor(session.name)};color:${colorFor(session.name)};"></span>${escapeHtml(session.name)}</div>
       <button class="small-btn" id="acc-logout">Salir</button>
     </div>
-    ${tokenSummaryHtml(session.name, calSelected || isoDate(new Date()))}
+    ${isTeamUser() ? `<div class="acc-tabs">
+      <button data-acc-tab="spaces" class="${accTab==='spaces'?'active':''}">Reservas espacio</button>
+      <button data-acc-tab="team" class="${accTab==='team'?'active':''}">Uso equipo</button>
+    </div>` : ''}
+    ${accTab==='team' && isTeamUser() ? '' : tokenSummaryHtml(session.name, calSelected || isoDate(new Date()))}
     <div class="legend-row">
-      <span><span class="legend-dot" style="background:${colorFor('HDMI')}"></span>HDMI</span>
+      ${accTab==='team' && isTeamUser()
+        ? TEAM_PEOPLE.map(n=>`<span><span class="legend-dot" style="background:${colorFor(n)}"></span>${n}</span>`).join('')
+        : `<span><span class="legend-dot" style="background:${colorFor('HDMI')}"></span>HDMI</span>
       <span><span class="legend-dot" style="background:${colorFor('JOVAEL')}"></span>JOVAEL</span>
-      <span><span class="legend-dot" style="background:${colorFor('INNIT COMPANY')}"></span>INNIT</span>
+      <span><span class="legend-dot" style="background:${colorFor('INNIT COMPANY')}"></span>INNIT</span>`}
     </div>
     <div class="month-nav">
       <div class="month-title">${MONTH_NAMES[calMonth.getMonth()]} ${calMonth.getFullYear()}</div>
@@ -1073,7 +1100,10 @@ function renderAccess(){
     <div id="day-detail"></div>
   `;
   document.getElementById('acc-logout').addEventListener('click', async ()=>{
-    await sb.auth.signOut(); session=null; calSelected=null; renderAccess();
+    await sb.auth.signOut(); session=null; calSelected=null; accTab='spaces'; teamList=[]; renderAccess();
+  });
+  root.querySelectorAll('[data-acc-tab]').forEach(b=>{
+    b.addEventListener('click', ()=>{ accTab = b.getAttribute('data-acc-tab'); renderAccess(); });
   });
   document.getElementById('cal-prev').addEventListener('click', ()=>{
     const c=new Date(calMonth.getFullYear(),calMonth.getMonth()-1,1);
@@ -1101,8 +1131,9 @@ function renderCalGrid(){
   grid.innerHTML = cells.map(c=>{
     const iso = isoDate(c.date);
     const dow = mondayIndex(c.date);
-    const dayEntries = bookingsList.filter(b=>b.date===iso);
-    const markers = dayEntries.slice(0,8).map(e=>`<span class="cal-marker" style="background:${colorFor(e.userName)}"></span>`);
+    const teamMode = accTab==='team' && isTeamUser();
+    const dayEntries = teamMode ? teamList.filter(t=>t.date===iso) : bookingsList.filter(b=>b.date===iso);
+    const markers = dayEntries.slice(0,8).map(e=>`<span class="cal-marker" style="background:${colorFor(teamMode ? e.person : e.userName)}"></span>`);
     return `<div class="cal-cell ${c.outside?'outside':''} ${iso===todayIso?'today':''} ${iso===calSelected?'selected':''}" data-date="${iso}">
       <div class="cal-date">${c.date.getDate()}</div>
       <div class="cal-markers">${markers.join('')}</div>
@@ -1119,6 +1150,7 @@ function renderDayDetail(){
   const d = new Date(calSelected+'T00:00:00');
   const dow = mondayIndex(d);
   const label = `${DAY_LABELS[dow]} ${d.getDate()} DE ${MONTH_NAMES[d.getMonth()].toUpperCase()}`;
+  if(accTab==='team' && isTeamUser()){ renderTeamDetail(box, label); return; }
 
   box.innerHTML = `<div class="day-detail"><div class="section-label">${label}</div>` +
     spacesList.map(sp=>{
@@ -1160,7 +1192,9 @@ function renderDayDetail(){
 
       const status = tokenStatusFor(session.name, calSelected);
       if(!status.allowed){
-        holder.innerHTML = `<div class="form-error" style="display:block;">Ya usaste tus 7 días disponibles esta semana (2 fijos + 5 extra).</div>`;
+        const alw = allowanceFor(session.name);
+        const alwTxt = alw.extra>0 ? `${alw.fijo+alw.extra} días disponibles esta semana (${alw.fijo} fijos + ${alw.extra} extra)` : `${alw.fijo===1?'tu día':'tus '+alw.fijo+' días'} de esta semana`;
+        holder.innerHTML = `<div class="form-error" style="display:block;">Ya usaste ${alwTxt}.</div>`;
         return;
       }
       const note = status.unlimited ? '' :
@@ -1185,6 +1219,65 @@ function renderDayDetail(){
         const freshStatus = tokenStatusFor(session.name, calSelected);
         if(!freshStatus.allowed){ err.style.display='block'; err.textContent='Ya no te quedan tokens esta semana.'; return; }
         const { error } = await sb.from('bookings').insert({ user_id: session.id, space_id: spaceId, date: calSelected, start_hour: s, end_hour: e, token_type: freshStatus.type });
+        if(error){ err.style.display='block'; err.textContent='No se pudo guardar: '+error.message; return; }
+        await loadDomainData();
+        renderAccess();
+      });
+    });
+  });
+}
+
+function renderTeamDetail(box, label){
+  box.innerHTML = `<div class="day-detail"><div class="section-label">${label} · USO EQUIPO</div>` +
+    TEAM_PEOPLE.map(person=>{
+      const col = colorFor(person);
+      const all = teamList.filter(t=>t.person===person && t.date===calSelected).sort((a,b)=>a.start_hour-b.start_hour);
+      const rows = all.length ? all.map(t=>`
+        <div class="slot-row">
+          <span class="slot-time">${pad(t.start_hour)}–${pad(t.end_hour)}</span>
+          <span class="slot-tag" style="background:${col}2e;color:${col};">Equipo</span>
+          <span>${t.note ? escapeHtml(t.note) : '<span class="team-note">sin nota</span>'}</span>
+          <button class="remove-x" data-team-cancel="${t.id}" title="Quitar">✕</button>
+        </div>`).join('') : `<div class="slot-row">Sin uso de equipo</div>`;
+      return `<div class="space-block">
+        <div class="space-name"><span class="legend-dot" style="background:${col};display:inline-block;margin-right:6px;"></span>${person}</div>
+        ${rows}
+        <div id="team-add-${person}"></div>
+        <button class="small-btn" data-team-add="${person}" style="margin-top:6px;">+ Añadir uso</button>
+      </div>`;
+    }).join('') + `</div>`;
+
+  box.querySelectorAll('[data-team-cancel]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('¿Quitar este uso de equipo?')) return;
+      await sb.from('team_usage').delete().eq('id', btn.getAttribute('data-team-cancel'));
+      await loadDomainData();
+      renderAccess();
+    });
+  });
+
+  box.querySelectorAll('[data-team-add]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const person = btn.getAttribute('data-team-add');
+      const holder = document.getElementById('team-add-'+person);
+      if(holder.dataset.open==='1'){ holder.innerHTML=''; holder.dataset.open='0'; return; }
+      holder.dataset.open='1';
+      holder.innerHTML = `
+        <div class="add-row">
+          <select class="add-start">${HOURS.slice(0,-1).map(h=>`<option value="${h}">${pad(h)}:00</option>`).join('')}</select>
+          <span style="font-size:11px;color:var(--ink-dim);">a</span>
+          <select class="add-end">${HOURS.slice(1).map(h=>`<option value="${h}">${pad(h)}:00</option>`).join('')}</select>
+          <input class="team-note-input" type="text" maxlength="80" placeholder="Qué equipo / para qué (opcional)" />
+          <button class="mini-btn">Guardar</button>
+        </div>
+        <div class="form-error" style="display:none;"></div>`;
+      holder.querySelector('.mini-btn').addEventListener('click', async ()=>{
+        const s = parseInt(holder.querySelector('.add-start').value,10);
+        const e = parseInt(holder.querySelector('.add-end').value,10);
+        const note = holder.querySelector('.team-note-input').value.trim();
+        const err = holder.querySelector('.form-error');
+        if(e<=s){ err.style.display='block'; err.textContent='La hora de fin debe ser posterior a la de inicio.'; return; }
+        const { error } = await sb.from('team_usage').insert({ person, date: calSelected, start_hour: s, end_hour: e, note: note || null });
         if(error){ err.style.display='block'; err.textContent='No se pudo guardar: '+error.message; return; }
         await loadDomainData();
         renderAccess();
