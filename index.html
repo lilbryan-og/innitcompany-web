@@ -1081,8 +1081,13 @@ function renderAccess(){
     ${isTeamUser() ? `<div class="acc-tabs">
       <button data-acc-tab="spaces" class="${accTab==='spaces'?'active':''}">Reservas espacio</button>
       <button data-acc-tab="team" class="${accTab==='team'?'active':''}">Uso equipo</button>
+    </div>
+    <div class="acc-tabs">
+      <a class="acc-link" href="espacio.html">Miembros ↗</a>
       <a class="acc-link" href="cuentas.html">Cuentas ↗</a>
-    </div>` : ''}
+    </div>` : `<div class="acc-tabs">
+      <a class="acc-link" href="espacio.html">Mi espacio: tus anillos y tu música ↗</a>
+    </div>`}
     ${accTab==='team' && isTeamUser() ? '' : tokenSummaryHtml(session.name, calSelected || isoDate(new Date()))}
     <div class="legend-row">
       ${accTab==='team' && isTeamUser()
