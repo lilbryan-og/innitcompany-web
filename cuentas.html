@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>INNIT · Cuentas</title>
+<link rel="icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --card:#f5f5f7; --card2:#ececf0; --ink:#0b0b0d; --dim:#6b6b76; --line:#e4e4ea;
+  --side:#000; --side-ink:#e9e9ee; --side-dim:#8d8d98; --side-active:#1c1c20;
+  --accent:#2200ff; --accent-soft:#c9c2ff; --good:#0f9d58; --good-bg:#e1f5ea; --bad:#d93025; --bad-bg:#fde7e5; --warn:#b35c00; --warn-bg:#ffeed8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+/* sidebar */
+.side{width:195px;flex:0 0 195px;background:var(--side);color:var(--side-ink);padding:18px 8px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{font-weight:800;font-size:19px;letter-spacing:.04em;padding:0 10px 18px;display:flex;align-items:center;gap:8px}
+.brand small{font-size:9px;font-weight:600;letter-spacing:.16em;color:var(--side-dim);border:1px solid #333;border-radius:20px;padding:2px 7px}
+.nav button{width:100%;display:flex;align-items:center;gap:11px;background:none;border:none;color:var(--side-dim);padding:10px 12px;border-radius:10px;font-size:13px;font-weight:500;text-align:left;margin-bottom:2px}
+.nav button:hover{color:#fff}
+.nav button.on{background:var(--side-active);color:#fff}
+.nav svg{width:16px;height:16px;flex:0 0 16px}
+.side-foot{margin-top:auto;padding:10px;display:flex;flex-direction:column;gap:10px}
+.who{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600}
+.who i{width:28px;height:28px;border-radius:50%;background:#7a5cff;display:grid;place-items:center;font-style:normal;font-size:12px}
+.side-foot a,.side-foot button{color:var(--side-dim);font-size:12px;background:none;border:none;text-align:left;text-decoration:none;padding:0}
+.side-foot a:hover,.side-foot button:hover{color:#fff}
+/* main */
+.main{flex:1;min-width:0;padding:22px 24px 60px;max-width:1500px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
+h1{font-size:28px;font-weight:700;letter-spacing:-.02em}
+.sub{color:var(--dim);font-size:13px;margin-top:6px}
+.pill{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:12px;padding:6px 8px;font-size:12px;font-weight:500}
+.pill button{background:none;border:none;font-size:16px;line-height:1;padding:4px 7px;border-radius:8px;color:var(--ink)}
+.pill button:hover{background:var(--card2)}
+.pill button:disabled{opacity:.3;cursor:default}
+.pill span{min-width:110px;text-align:center}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:var(--card);border-radius:18px;padding:16px 18px}
+.kpi .l{font-size:12px;color:var(--dim)}
+.kpi .v{font-size:30px;font-weight:700;letter-spacing:-.02em;margin-top:10px}
+.kpi .n{font-size:12px;color:var(--dim);margin-top:8px}
+.tag{display:inline-block;font-size:11px;font-weight:600;border-radius:7px;padding:2px 7px;margin-right:6px}
+.tag.good{background:var(--good-bg);color:var(--good)} .tag.bad{background:var(--bad-bg);color:var(--bad)} .tag.warn{background:var(--warn-bg);color:var(--warn)} .tag.mute{background:var(--card2);color:var(--dim)}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+.strip .card{padding:12px 16px;display:flex;justify-content:space-between;font-size:13px;border-radius:12px}
+.strip b{font-weight:700}
+.two{display:grid;grid-template-columns:1.65fr 1fr;gap:12px;margin-top:12px}
+.card h2{font-size:16px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.card h2 a,.link{font-size:11px;font-weight:500;color:var(--ink);background:none;border:none;text-decoration:none}
+.bars{display:flex;align-items:flex-end;gap:14px;height:190px;margin-top:22px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;font-size:11px;color:var(--dim)}
+.bar .val{color:var(--ink);font-size:11px;font-weight:500;white-space:nowrap}
+.bar .col{width:100%;border-radius:8px;background:var(--accent-soft);min-height:6px}
+.bar.cur .col{background:var(--accent)}
+.legend{font-size:11px;color:var(--dim);margin-top:14px}
+.attn-item{display:flex;gap:12px;align-items:center;padding:11px 0}
+.attn-item .ic{width:34px;height:34px;border-radius:50%;background:var(--warn-bg);color:var(--warn);display:grid;place-items:center;font-weight:700;flex:0 0 34px}
+.attn-item .t{font-size:13px;font-weight:500}.attn-item .s{font-size:11px;color:var(--dim);margin-top:2px}
+.attn-item.ok .ic{background:var(--good-bg);color:var(--good)}
+.cat{margin-top:12px}.cat .r{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.cat .t{height:7px;background:var(--card2);border-radius:5px;overflow:hidden}.cat .t i{display:block;height:100%;background:var(--accent);border-radius:5px}
+/* table */
+.tbl{margin-top:12px;overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:0 6px;margin-top:8px}
+th{font-size:11px;font-weight:500;color:var(--dim);text-align:left;padding:4px 12px}
+td{background:#fff;padding:13px 12px;font-size:13px;vertical-align:middle}
+td:first-child{border-radius:10px 0 0 10px}td:last-child{border-radius:0 10px 10px 0}
+td.num,th.num{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+td b{font-weight:600}
+.row-actions button{background:none;border:none;color:var(--dim);font-size:12px;text-decoration:underline;margin-left:10px}
+.row-actions button:hover{color:var(--ink)}
+.empty{color:var(--dim);font-size:13px;padding:18px 4px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600}
+.btn:hover{opacity:.88}.btn.ghost{background:var(--card);color:var(--ink)}.btn:disabled{opacity:.5}
+/* socios */
+.partners{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.big-balance{font-size:34px;font-weight:700;letter-spacing:-.02em;margin-top:12px}
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.scrim.on{display:flex}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:520px;max-height:92vh;overflow:auto;padding:22px}
+.modal h3{font-size:20px;font-weight:700;margin-bottom:14px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}.f .full{grid-column:1/-1}
+.f label{font-size:11px;color:var(--dim);display:block;margin-bottom:5px}
+.f input,.f select{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 11px;font-size:13px;font-family:inherit}
+.f input:focus,.f select:focus{outline:2px solid var(--accent);border-color:transparent}
+.preview{background:var(--card);border-radius:12px;padding:11px 13px;font-size:12px;color:var(--dim);margin-top:12px;line-height:1.5}
+.err{color:var(--bad);font-size:12px;margin-top:10px;min-height:14px}
+.mfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+/* login */
+.login{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px;background:#000}
+.login .box{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:360px}
+.login h1{font-size:22px}.login .f{grid-template-columns:1fr;margin-top:16px}
+.denied{padding:60px 20px;text-align:center;color:var(--dim)}
+@media(max-width:1000px){
+  .kpis,.strip{grid-template-columns:1fr 1fr}.two,.partners{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .app{flex-direction:column}
+  .side{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px;gap:6px;flex:none}
+  .brand{padding:0 8px}.nav{display:flex;gap:2px;flex-wrap:wrap}.nav button{width:auto;padding:8px 10px}.nav button span{display:none}
+  .side-foot{margin:0 0 0 auto;flex-direction:row;align-items:center}.who span{display:none}
+  .main{padding:16px 14px 60px}.top{flex-direction:column}h1{font-size:24px}
+  .kpis,.strip{grid-template-columns:1fr 1fr}.kpi .v{font-size:22px}
+  th.hide-m,td.hide-m{display:none}.bars{gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="login" id="login">
+  <div class="box">
+    <h1>INNIT · Cuentas</h1>
+    <div class="sub">Área privada de socios.</div>
+    <div class="f">
+      <div><label>Email</label><input id="l-email" type="email" autocomplete="username"></div>
+      <div><label>Contraseña</label><input id="l-pass" type="password" autocomplete="current-password"></div>
+    </div>
+    <div class="err" id="l-err"></div>
+    <button class="btn" id="l-go" style="width:100%;margin-top:6px">Entrar</button>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none">
+  <aside class="side">
+    <div class="brand">INNIT <small>CUENTAS</small></div>
+    <nav class="nav" id="nav">
+      <button data-v="resumen" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Resumen</span></button>
+      <button data-v="mov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Movimientos</span></button>
+      <button data-v="socios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M17 14.2c2.4 0 4 1.8 4 4.3"/></svg><span>Socios</span></button>
+      <button data-v="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg><span>Exportar</span></button>
+    </nav>
+    <div class="side-foot">
+      <div class="who"><i id="who-i">I</i><span id="who-n"></span></div>
+      <a href="index.html">← Volver a la web</a>
+      <button id="logout">Cerrar sesión</button>
+    </div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<div class="scrim" id="scrim">
+  <div class="modal">
+    <h3>Nuevo movimiento</h3>
+    <div class="f">
+      <div><label>Tipo</label><select id="m-kind"><option value="gasto">Gasto (factura)</option><option value="ingreso">Ingreso</option><option value="liquidacion">Liquidación entre socios</option></select></div>
+      <div><label id="m-partner-l">Lo pagó</label><select id="m-partner"><option>BRYAN</option><option>LEANDRO</option></select></div>
+      <div><label>Fecha</label><input id="m-date" type="date"></div>
+      <div id="m-cat-w"><label>Categoría</label><select id="m-cat"></select></div>
+      <div class="full"><label>Concepto</label><input id="m-concept" placeholder="Ej. Factura luz septiembre"></div>
+      <div class="full" id="m-sup-w"><label>Proveedor (opcional)</label><input id="m-supplier"></div>
+      <div><label>Base imponible (€)</label><input id="m-base" inputmode="decimal" placeholder="0,00"></div>
+      <div id="m-vat-w"><label>IVA %</label><input id="m-vat" inputmode="decimal" value="21"></div>
+      <div class="full" id="m-file-w"><label>Factura (PDF o foto)</label><input id="m-file" type="file" accept="application/pdf,image/*"></div>
+    </div>
+    <div class="preview" id="m-prev"></div>
+    <div class="err" id="m-err"></div>
+    <div class="mfoot"><button class="btn ghost" id="m-cancel">Cancelar</button><button class="btn" id="m-save">Guardar</button></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://mjmffatrtiieiqxyzwxj.supabase.co', SB_KEY='sb_publishable_2JVO27C79lMkmAoEVZmx3g_Xdax_jig';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const CATS=['Luz','Agua','Alarma','Limpieza','Internet','Alquiler','Obras / pintura','Mobiliario','Equipo','Material','Otros'];
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+let me=null, list=[], view='resumen', cur=new Date(); cur=new Date(cur.getFullYear(),cur.getMonth(),1);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const eur=c=>(c/100).toLocaleString('es-ES',{style:'currency',currency:'EUR'});
+const toCents=s=>{const n=parseFloat(String(s).replace(/\s/g,'').replace(',','.'));return isFinite(n)?Math.round(n*100):NaN;};
+const mkey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+const KL={gasto:'Gasto',ingreso:'Ingreso',liquidacion:'Liquidación'};
+
+function positions(L){
+  let g=0,i=0;const c={BRYAN:0,LEANDRO:0},paid={BRYAN:0,LEANDRO:0};
+  L.forEach(e=>{const o=e.partner==='BRYAN'?'LEANDRO':'BRYAN';
+    if(e.kind==='gasto'){g+=e.base_cents;c[e.partner]+=e.base_cents;paid[e.partner]+=e.base_cents;}
+    else if(e.kind==='ingreso'){i+=e.base_cents;c[e.partner]-=e.base_cents;}
+    else{c[e.partner]+=e.base_cents;c[o]-=e.base_cents;}});
+  const net=g-i,half=net/2;
+  return{gastos:g,ingresos:i,net,paid,bal:{BRYAN:Math.round(c.BRYAN-half),LEANDRO:Math.round(c.LEANDRO-half)}};
+}
+const balText=b=>Math.abs(b.BRYAN)<1?'Cuentas a cero':(b.BRYAN>0?`LEANDRO debe a BRYAN ${eur(b.BRYAN)}`:`BRYAN debe a LEANDRO ${eur(-b.BRYAN)}`);
+
+/* ---------- auth ---------- */
+async function boot(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){showLogin();return;}
+  const {data:prof}=await sb.from('profiles').select('name').eq('id',session.user.id).single();
+  if(!prof||prof.name!=='INNIT COMPANY'){
+    $('login').style.display='none';$('app').style.display='block';
+    $('app').innerHTML='<div class="denied"><h1>Acceso restringido</h1><p class="sub">Esta área es solo para los socios de INNIT.</p><p style="margin-top:18px"><a href="index.html">← Volver a la web</a> · <a href="#" id="d-out">Cerrar sesión</a></p></div>';
+    $('d-out').onclick=async e=>{e.preventDefault();await sb.auth.signOut();location.reload();};
+    return;
+  }
+  me=prof;$('who-n').textContent='INNIT COMPANY';
+  $('login').style.display='none';$('app').style.display='flex';
+  await load();render();
+}
+function showLogin(){$('app').style.display='none';$('login').style.display='flex';}
+$('l-go').onclick=async()=>{
+  const {error}=await sb.auth.signInWithPassword({email:$('l-email').value.trim(),password:$('l-pass').value});
+  if(error){$('l-err').textContent=error.message;return;}
+  boot();
+};
+$('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')$('l-go').click();});
+$('logout').onclick=async()=>{await sb.auth.signOut();location.reload();};
+
+async function load(){
+  const {data}=await sb.from('finance_entries').select('*').order('date',{ascending:false}).order('created_at',{ascending:false});
+  list=data||[];
+}
+
+/* ---------- views ---------- */
+function monthPill(){
+  return `<div class="pill"><button id="pm" aria-label="Mes anterior">‹</button><span>${MONTHS[cur.getMonth()]} ${cur.getFullYear()}</span><button id="nm" aria-label="Mes siguiente">›</button></div>`;
+}
+function bindPill(){
+  const p=$('pm'),n=$('nm'); if(!p)return;
+  p.onclick=()=>{cur=new Date(cur.getFullYear(),cur.getMonth()-1,1);render();};
+  n.onclick=()=>{cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);render();};
+}
+function header(t,s,extra){return `<div class="top"><div><h1>${t}</h1><div class="sub">${s}</div></div><div class="toolbar">${extra||''}</div></div>`;}
+function rowsHtml(rows,actions){
+  if(!rows.length) return '<div class="empty">Sin movimientos.</div>';
+  return `<table><thead><tr><th>Fecha</th><th>Concepto</th><th class="hide-m">Categoría</th><th>Socio</th><th class="num">Base</th><th class="num hide-m">IVA</th>${actions?'<th></th>':''}</tr></thead><tbody>`+
+  rows.map(e=>{const s=e.kind==='ingreso'?'+':e.kind==='gasto'?'−':'⇄';const d=String(e.date);
+    return `<tr><td>${d.slice(8,10)}/${d.slice(5,7)}/${d.slice(2,4)}</td>
+    <td><b>${esc(e.concept)}</b><div class="sub" style="margin-top:2px;font-size:11px">${KL[e.kind]}${e.supplier?' · '+esc(e.supplier):''}</div></td>
+    <td class="hide-m">${esc(e.category||'—')}</td><td>${esc(e.partner)}</td>
+    <td class="num"><b>${s} ${eur(e.base_cents)}</b></td><td class="num hide-m">${e.vat_cents?eur(e.vat_cents):'—'}</td>
+    ${actions?`<td class="num row-actions">${e.invoice_path?`<button data-view="${e.id}">Factura</button>`:''}<button data-del="${e.id}">Borrar</button></td>`:''}</tr>`;}).join('')+'</tbody></table>';
+}
+function render(){
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  const m=$('main');
+  if(view==='resumen') m.innerHTML=vResumen();
+  else if(view==='mov') m.innerHTML=vMov();
+  else if(view==='socios') m.innerHTML=vSocios();
+  else m.innerHTML=vExport();
+  bindPill(); bindActions();
+  const nb=$('new-btn'); if(nb) nb.onclick=openModal;
+}
+function vResumen(){
+  const mk=mkey(cur), inM=list.filter(e=>String(e.date).slice(0,7)===mk);
+  const A=positions(list), M=positions(inM);
+  const good=Math.abs(A.bal.BRYAN)<1;
+  // last 6 months bars
+  const months=[];for(let k=5;k>=0;k--)months.push(new Date(cur.getFullYear(),cur.getMonth()-k,1));
+  const vals=months.map(d=>positions(list.filter(e=>String(e.date).slice(0,7)===mkey(d))).gastos);
+  const mx=Math.max(...vals,1);
+  const bars=months.map((d,i)=>`<div class="bar ${i===5?'cur':''}"><div class="val">${vals[i]?eur(vals[i]):'—'}</div><div class="col" style="height:${Math.max(vals[i]/mx*130,4)}px"></div><div>${MONTHS[d.getMonth()].slice(0,3)}</div></div>`).join('');
+  // categories (selected month)
+  const cats={};inM.filter(e=>e.kind==='gasto').forEach(e=>{const c=e.category||'Otros';cats[c]=(cats[c]||0)+e.base_cents;});
+  const cl=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const catHtml=cl.length?cl.map(([c,v])=>`<div class="cat"><div class="r"><span>${esc(c)}</span><b>${eur(v)}</b></div><div class="t"><i style="width:${v/M.gastos*100}%"></i></div></div>`).join(''):'<div class="empty">Sin gastos este mes.</div>';
+  // attention: gastos sin factura
+  const noInv=list.filter(e=>e.kind==='gasto'&&!e.invoice_path);
+  const attn=noInv.length?noInv.slice(0,4).map(e=>`<div class="attn-item"><div class="ic">!</div><div><div class="t">Falta la factura: ${esc(e.concept)}</div><div class="s">${esc(e.partner)} · ${eur(e.base_cents)} · ${String(e.date).slice(8,10)}/${String(e.date).slice(5,7)}</div></div></div>`).join('')
+    :'<div class="attn-item ok"><div class="ic">✓</div><div><div class="t">Todo en orden</div><div class="s">Todos los gastos tienen factura adjunta.</div></div></div>';
+  return header('Resumen','Los gastos de INNIT y el balance entre socios, solo base imponible.',monthPill()+'<button class="btn" id="new-btn">+ Nuevo movimiento</button>')+`
+  <div class="kpis">
+    <div class="card kpi"><div class="l">Balance entre socios</div><div class="v" style="font-size:${good?30:22}px;line-height:1.15">${good?'A cero':eur(Math.abs(A.bal.BRYAN))}</div><div class="n"><span class="tag ${good?'good':'warn'}">${good?'Al día':'Pendiente'}</span>${good?'Nadie debe nada':(A.bal.BRYAN>0?'LEANDRO → BRYAN':'BRYAN → LEANDRO')}</div></div>
+    <div class="card kpi"><div class="l">Gastos del mes</div><div class="v">${eur(M.gastos)}</div><div class="n">${inM.filter(e=>e.kind==='gasto').length} facturas · sin IVA</div></div>
+    <div class="card kpi"><div class="l">Ingresos del mes</div><div class="v">${eur(M.ingresos)}</div><div class="n">${inM.filter(e=>e.kind==='ingreso').length} movimientos</div></div>
+    <div class="card kpi"><div class="l">Coste neto acumulado</div><div class="v">${eur(A.net)}</div><div class="n">${eur(Math.round(A.net/2))} por socio</div></div>
+  </div>
+  <div class="strip">
+    <div class="card"><span>BRYAN ha pagado</span><b>${eur(A.paid.BRYAN)}</b></div>
+    <div class="card"><span>LEANDRO ha pagado</span><b>${eur(A.paid.LEANDRO)}</b></div>
+    <div class="card"><span>Sin factura</span><b>${noInv.length}</b></div>
+    <div class="card"><span>Movimientos</span><b>${list.length}</b></div>
+  </div>
+  <div class="two">
+    <div class="card"><h2>Gasto por mes <span class="link" style="color:var(--dim)">Últimos 6 meses</span></h2><div class="bars">${bars}</div><div class="legend">Gastos en base imponible · ${MONTHS[cur.getMonth()]} resaltado</div></div>
+    <div class="card"><h2>Necesita atención <span class="tag ${noInv.length?'warn':'good'}">${noInv.length}</span></h2>${attn}<h2 style="margin-top:14px">Por categoría</h2>${catHtml}</div>
+  </div>
+  <div class="card tbl"><h2>Últimos movimientos <button class="link" data-go="mov">Todos los movimientos ↗</button></h2>${rowsHtml(list.slice(0,6),false)}</div>`;
+}
+function vMov(){
+  const mk=mkey(cur);let rows=list.filter(e=>String(e.date).slice(0,7)===mk);
+  return header('Movimientos','Todas las facturas, ingresos y liquidaciones.',monthPill()+'<button class="btn" id="new-btn">+ Nuevo movimiento</button>')+
+  `<div class="card tbl"><h2>${MONTHS[cur.getMonth()]} ${cur.getFullYear()} <span class="sub" style="margin:0">${rows.length} movimientos · ${eur(positions(rows).gastos)} en gastos</span></h2>${rowsHtml(rows,true)}</div>`;
+}
+function vSocios(){
+  const A=positions(list);const good=Math.abs(A.bal.BRYAN)<1;
+  const settle=list.filter(e=>e.kind==='liquidacion');
+  const card=n=>`<div class="card"><div class="l" style="color:var(--dim);font-size:12px">${n}</div><div class="big-balance">${eur(A.paid[n])}</div><div class="sub">pagado en gastos · ${A.bal[n]>0?'le deben '+eur(A.bal[n]):A.bal[n]<0?'debe '+eur(-A.bal[n]):'al día'}</div></div>`;
+  return header('Socios','Reparto 50/50 de gastos menos ingresos. El IVA no cuenta.','<button class="btn" id="new-btn">+ Nuevo movimiento</button>')+
+  `<div class="card"><div class="l" style="color:var(--dim);font-size:12px">Balance actual</div><div class="big-balance">${balText(A.bal)}</div>
+    <div class="sub">Gastos ${eur(A.gastos)} − Ingresos ${eur(A.ingresos)} = coste neto ${eur(A.net)} (${eur(Math.round(A.net/2))} cada uno). Para saldar, registra una <b>Liquidación</b>: quién paga y cuánto.</div></div>
+  <div class="partners">${card('BRYAN')}${card('LEANDRO')}</div>
+  <div class="card tbl"><h2>Liquidaciones realizadas</h2>${rowsHtml(settle,true)}</div>`;
+}
+function vExport(){
+  return header('Exportar','Para tu gestor o tu propia contabilidad.','')+
+  `<div class="card"><h2>CSV completo</h2><div class="sub">Todos los movimientos con base, IVA y total. Se abre en Excel.</div><div style="margin-top:14px"><button class="btn" id="csv">Descargar CSV</button></div></div>`;
+}
+
+/* ---------- actions ---------- */
+function bindActions(){
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{view=b.dataset.go;render();});
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=async()=>{
+    const e=list.find(x=>x.id===b.dataset.view);if(!e)return;
+    const {data,error}=await sb.storage.from('facturas').createSignedUrl(e.invoice_path,120);
+    if(error||!data){alert('No se pudo abrir la factura');return;}
+    window.open(data.signedUrl,'_blank','noopener');
+  });
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{
+    const e=list.find(x=>x.id===b.dataset.del);if(!e)return;
+    if(!confirm('¿Borrar "'+e.concept+'"? Se recalcula el balance.'))return;
+    if(e.invoice_path)await sb.storage.from('facturas').remove([e.invoice_path]);
+    await sb.from('finance_entries').delete().eq('id',e.id);
+    await load();render();
+  });
+  const c=$('csv');if(c)c.onclick=exportCsv;
+}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;view=b.dataset.v;render();});
+function exportCsv(){
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const rows=[['Fecha','Tipo','Socio','Categoria','Proveedor','Concepto','Base','IVA %','IVA','Total','Factura']];
+  list.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(e=>rows.push([e.date,e.kind,e.partner,e.category,e.supplier,e.concept,(e.base_cents/100).toFixed(2),e.vat_rate,(e.vat_cents/100).toFixed(2),((e.base_cents+e.vat_cents)/100).toFixed(2),e.invoice_path?'si':'']));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+rows.map(r=>r.map(q).join(';')).join('\n')],{type:'text/csv;charset=utf-8'}));
+  a.download='cuentas-innit.csv';document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ---------- modal ---------- */
+$('m-cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join('');
+function updModal(){
+  const k=$('m-kind').value,liq=k==='liquidacion';
+  $('m-partner-l').textContent=k==='gasto'?'Lo pagó':k==='ingreso'?'Lo cobró':'Quién paga al otro';
+  ['m-cat-w','m-sup-w','m-vat-w','m-file-w'].forEach(id=>$(id).style.display=liq?'none':'');
+  if(k==='ingreso')$('m-file-w').style.display='none';
+  const b=toCents($('m-base').value),r=parseFloat(String($('m-vat').value).replace(',','.'))||0;
+  $('m-prev').innerHTML=liq?'Una liquidación reduce lo que se deben: el socio elegido paga esa cantidad al otro.':
+    (isFinite(b)&&b>0?`Base <b>${eur(b)}</b> + IVA ${r}% <b>${eur(Math.round(b*r/100))}</b> = total ${eur(b+Math.round(b*r/100))}.<br>Al balance solo entra la base: cada socio asume ${eur(Math.round(b/2))}.`:'Escribe la base imponible para ver el cálculo.');
+}
+['m-kind','m-base','m-vat'].forEach(id=>$(id).addEventListener('input',updModal));
+function openModal(){
+  $('m-date').value=new Date().toISOString().slice(0,10);
+  ['m-concept','m-supplier','m-base'].forEach(id=>$(id).value='');$('m-file').value='';$('m-err').textContent='';
+  $('m-kind').value='gasto';updModal();$('scrim').classList.add('on');
+}
+$('m-cancel').onclick=()=>$('scrim').classList.remove('on');
+$('scrim').addEventListener('click',e=>{if(e.target.id==='scrim')$('scrim').classList.remove('on');});
+$('m-save').onclick=async()=>{
+  const kind=$('m-kind').value,partner=$('m-partner').value,date=$('m-date').value,concept=$('m-concept').value.trim();
+  const base=toCents($('m-base').value),rate=parseFloat(String($('m-vat').value).replace(',','.'))||0;
+  const fail=t=>{$('m-err').textContent=t;};
+  if(!date)return fail('Pon la fecha.');if(!concept)return fail('Pon un concepto.');
+  if(!isFinite(base)||base<=0)return fail('Pon una base imponible válida.');
+  const liq=kind==='liquidacion',vat=liq?0:Math.round(base*rate/100);
+  const file=kind==='gasto'?$('m-file').files[0]:null;let path=null;
+  const btn=$('m-save');btn.disabled=true;btn.textContent='Guardando…';
+  const reset=()=>{btn.disabled=false;btn.textContent='Guardar';};
+  if(file){
+    path=date.slice(0,7)+'/'+Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    const up=await sb.storage.from('facturas').upload(path,file,{contentType:file.type||undefined});
+    if(up.error){reset();return fail('Error subiendo la factura: '+up.error.message);}
+  }
+  const {error}=await sb.from('finance_entries').insert({kind,partner,date,concept,
+    category:liq?null:$('m-cat').value,supplier:$('m-supplier').value.trim()||null,
+    base_cents:base,vat_rate:liq?0:rate,vat_cents:vat,invoice_path:path});
+  reset();
+  if(error)return fail(error.message);
+  cur=new Date(+date.slice(0,4),+date.slice(5,7)-1,1);
+  $('scrim').classList.remove('on');await load();render();
+};
+
+boot();
+</script>
+</body>
+</html>

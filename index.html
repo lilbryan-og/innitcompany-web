@@ -451,33 +451,13 @@ img.logo{height:22px;width:auto;display:block;}
 textarea.field{resize:none;min-height:64px;font-family:'Inter',sans-serif;}
 .acc-tabs{display:flex;gap:6px;margin-top:12px;}
 .acc-tabs button{flex:1;background:transparent;border:1px solid var(--hairline);color:var(--ink-dim);border-radius:8px;padding:8px 6px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;transition:background 0.2s var(--ease),color 0.2s var(--ease);}
+.acc-tabs .acc-link{flex:1;display:flex;align-items:center;justify-content:center;border:1px solid var(--hairline);color:var(--ink);border-radius:8px;padding:8px 6px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;}
+.acc-tabs .acc-link:hover{background:var(--ink);color:#0c0b0f;}
 .acc-tabs button:hover{color:var(--ink);}
 .acc-tabs button.active{background:var(--ink);color:#0c0b0f;border-color:var(--ink);}
 .team-note{font-size:10.5px;color:var(--ink-dim);}
 .add-row .team-note-input{flex:1 1 100%;background:transparent;border:none;border-bottom:1px solid var(--hairline);color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;}
 .add-row .team-note-input:focus{outline:none;border-bottom-color:var(--ink);}
-.fin-card{border:1px solid var(--hairline);border-radius:10px;padding:14px;margin-top:10px;background:rgba(255,255,255,0.04);}
-.fin-card-title{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);}
-.fin-big{font-size:20px;font-weight:600;margin-top:6px;line-height:1.25;}
-.fin-sub{font-size:11px;color:var(--ink-dim);margin-top:4px;line-height:1.4;}
-.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
-.fin-grid .fin-card{margin-top:0;}
-.fin-toolbar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
-.fin-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--hairline);}
-.fin-date{font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink-dim);width:38px;flex:0 0 auto;padding-top:2px;}
-.fin-main{flex:1;min-width:0;font-size:12px;line-height:1.35;word-break:break-word;}
-.fin-amt{font-family:'Geist Mono',monospace;font-size:12px;text-align:right;white-space:nowrap;}
-.fin-pos{color:#4ade80;} .fin-neg{color:#f87171;}
-.fin-link{background:none;border:none;color:var(--ink-dim);text-decoration:underline;font-size:10.5px;cursor:pointer;padding:0;margin-right:10px;font-family:inherit;}
-.fin-link:hover{color:var(--ink);}
-.fin-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
-.fin-form .full{grid-column:1/-1;}
-.fin-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--hairline);color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;padding:8px 0;}
-.fin-input:focus{outline:none;border-bottom-color:var(--ink);}
-select.fin-input{background:#fff;color:#111;border-radius:4px;padding:8px 6px;border:none;}
-select.fin-input option{background:#fff;color:#111;}
-.fin-file{font-size:11px;color:var(--ink-dim);}
-.fin-total{font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink-dim);text-align:right;margin-top:8px;}
 .pass-wrap{display:flex;align-items:center;border-bottom:1px solid var(--hairline);margin-top:8px;}
 .pass-wrap:focus-within{border-bottom-color:var(--ink);}
 .pass-wrap .field{border-bottom:none;margin-top:0;flex:1;min-width:0;}
@@ -1043,11 +1023,10 @@ async function loadDomainData(){
   spacesList = sp || [];
   const nameOf = id => { const p=(profs||[]).find(x=>x.id===id); return p?p.name:'—'; };
   bookingsList = (bk||[]).map(b=>({...b, userName:nameOf(b.user_id)}));
-  teamList = []; finList = [];
+  teamList = [];
   if(isTeamUser()){
     const { data: tu } = await sb.from('team_usage').select('*');
     teamList = tu || [];
-    await finLoad();
   }
 }
 
@@ -1094,7 +1073,6 @@ function renderAccess(){
     return;
   }
 
-  const finMode = accTab==='finance' && isTeamUser();
   root.innerHTML = `
     <div class="session-row">
       <div class="session-name"><span class="session-dot" style="background:${colorFor(session.name)};color:${colorFor(session.name)};"></span>${escapeHtml(session.name)}</div>
@@ -1103,9 +1081,8 @@ function renderAccess(){
     ${isTeamUser() ? `<div class="acc-tabs">
       <button data-acc-tab="spaces" class="${accTab==='spaces'?'active':''}">Reservas espacio</button>
       <button data-acc-tab="team" class="${accTab==='team'?'active':''}">Uso equipo</button>
-      <button data-acc-tab="finance" class="${accTab==='finance'?'active':''}">Cuentas</button>
+      <a class="acc-link" href="cuentas.html">Cuentas ↗</a>
     </div>` : ''}
-    ${finMode ? '<div id="fin-root"></div>' : `
     ${accTab==='team' && isTeamUser() ? '' : tokenSummaryHtml(session.name, calSelected || isoDate(new Date()))}
     <div class="legend-row">
       ${accTab==='team' && isTeamUser()
@@ -1124,15 +1101,13 @@ function renderAccess(){
     <div class="cal-head">${DAY_LABELS.map(l=>`<div>${l}</div>`).join('')}</div>
     <div class="cal-grid" id="cal-grid"></div>
     <div id="day-detail"></div>
-    `}
   `;
   document.getElementById('acc-logout').addEventListener('click', async ()=>{
-    await sb.auth.signOut(); session=null; calSelected=null; accTab='spaces'; teamList=[]; finList=[]; renderAccess();
+    await sb.auth.signOut(); session=null; calSelected=null; accTab='spaces'; teamList=[]; renderAccess();
   });
   root.querySelectorAll('[data-acc-tab]').forEach(b=>{
     b.addEventListener('click', ()=>{ accTab = b.getAttribute('data-acc-tab'); renderAccess(); });
   });
-  if(finMode){ renderFinance(); return; }
   document.getElementById('cal-prev').addEventListener('click', ()=>{
     const c=new Date(calMonth.getFullYear(),calMonth.getMonth()-1,1);
     if(monthKey(c)>=monthKey(MIN_MONTH)){ calMonth=c; renderAccess(); }
@@ -1253,161 +1228,6 @@ function renderDayDetail(){
       });
     });
   });
-}
-
-/* ===== CUENTAS (solo INNIT COMPANY) ===== */
-const FIN_CATEGORIES=['Luz','Agua','Alarma','Limpieza','Internet','Alquiler','Obras / pintura','Mobiliario','Equipo','Material','Otros'];
-let finList=[];
-let finMonth=new Date(); finMonth=new Date(finMonth.getFullYear(),finMonth.getMonth(),1);
-let finAll=false;
-function eur(c){ return (c/100).toLocaleString('es-ES',{style:'currency',currency:'EUR'}); }
-function toCents(s){ const n=parseFloat(String(s).replace(/\s/g,'').replace(',','.')); return isFinite(n)?Math.round(n*100):NaN; }
-function finPositions(list){
-  let gastos=0,ingresos=0; const c={BRYAN:0,LEANDRO:0}; const g={BRYAN:0,LEANDRO:0};
-  list.forEach(e=>{
-    const other=e.partner==='BRYAN'?'LEANDRO':'BRYAN';
-    if(e.kind==='gasto'){ gastos+=e.base_cents; c[e.partner]+=e.base_cents; g[e.partner]+=e.base_cents; }
-    else if(e.kind==='ingreso'){ ingresos+=e.base_cents; c[e.partner]-=e.base_cents; }
-    else if(e.kind==='liquidacion'){ c[e.partner]+=e.base_cents; c[other]-=e.base_cents; }
-  });
-  const net=gastos-ingresos; const half=net/2;
-  const bal={BRYAN:Math.round(c.BRYAN-half),LEANDRO:Math.round(c.LEANDRO-half)}; // >0 => le deben
-  return {gastos,ingresos,net,bal,gBy:g};
-}
-function finBalanceText(bal){
-  if(Math.abs(bal.BRYAN)<1) return 'Cuentas a cero';
-  return bal.BRYAN>0 ? `LEANDRO debe a BRYAN ${eur(bal.BRYAN)}` : `BRYAN debe a LEANDRO ${eur(-bal.BRYAN)}`;
-}
-async function finLoad(){
-  const { data } = await sb.from('finance_entries').select('*').order('date',{ascending:false}).order('created_at',{ascending:false});
-  finList = data || [];
-}
-function renderFinance(){
-  const root=document.getElementById('fin-root'); if(!root) return;
-  const mk=monthKey(finMonth);
-  const inMonth=finList.filter(e=>String(e.date).slice(0,7)===mk);
-  const view=finAll?finList:inMonth;
-  const P=finPositions(finList), M=finPositions(inMonth);
-  const today=isoDate(new Date());
-  const kindLabel={gasto:'Gasto',ingreso:'Ingreso',liquidacion:'Liquidación'};
-  root.innerHTML=`
-    <div class="fin-card">
-      <div class="fin-card-title">Balance acumulado (base imponible, sin IVA)</div>
-      <div class="fin-big ${Math.abs(P.bal.BRYAN)<1?'':(P.bal.BRYAN>0?'fin-pos':'fin-neg')}">${finBalanceText(P.bal)}</div>
-      <div class="fin-sub">Reparto 50/50 de gastos menos ingresos. Gastos: ${eur(P.gastos)} · Ingresos: ${eur(P.ingresos)} · Coste neto: ${eur(P.net)} (${eur(Math.round(P.net/2))} c/u)</div>
-    </div>
-    <div class="month-nav" style="margin-top:12px;">
-      <div class="month-title">${finAll?'TODO':MONTH_NAMES[finMonth.getMonth()]+' '+finMonth.getFullYear()}</div>
-      <div class="month-arrows">
-        <button id="fin-prev" ${finAll?'disabled':''}>‹</button>
-        <button id="fin-next" ${finAll?'disabled':''}>›</button>
-      </div>
-    </div>
-    <div class="fin-grid">
-      <div class="fin-card"><div class="fin-card-title">BRYAN pagó</div><div class="fin-big">${eur(M.gBy.BRYAN)}</div></div>
-      <div class="fin-card"><div class="fin-card-title">LEANDRO pagó</div><div class="fin-big">${eur(M.gBy.LEANDRO)}</div></div>
-      <div class="fin-card"><div class="fin-card-title">Gastos mes</div><div class="fin-big">${eur(M.gastos)}</div></div>
-      <div class="fin-card"><div class="fin-card-title">Ingresos mes</div><div class="fin-big">${eur(M.ingresos)}</div></div>
-    </div>
-    <div class="fin-toolbar">
-      <button class="small-btn" id="fin-toggle-all">${finAll?'Ver por mes':'Ver todo'}</button>
-      <button class="small-btn" id="fin-csv">Exportar CSV</button>
-    </div>
-    <div class="fin-card">
-      <div class="fin-card-title">Añadir movimiento</div>
-      <div class="fin-form">
-        <select class="fin-input" id="ff-kind"><option value="gasto">Gasto (factura)</option><option value="ingreso">Ingreso</option><option value="liquidacion">Liquidación (pago entre socios)</option></select>
-        <select class="fin-input" id="ff-partner"><option value="BRYAN">BRYAN</option><option value="LEANDRO">LEANDRO</option></select>
-        <input class="fin-input" id="ff-date" type="date" value="${today}" />
-        <select class="fin-input" id="ff-cat">${FIN_CATEGORIES.map(c=>`<option>${c}</option>`).join('')}</select>
-        <input class="fin-input full" id="ff-concept" type="text" placeholder="CONCEPTO (ej. Factura luz septiembre)" />
-        <input class="fin-input full" id="ff-supplier" type="text" placeholder="PROVEEDOR (opcional)" />
-        <input class="fin-input" id="ff-base" type="text" inputmode="decimal" placeholder="BASE IMPONIBLE €" />
-        <input class="fin-input" id="ff-vat" type="text" inputmode="decimal" placeholder="IVA % (21)" value="21" />
-        <div class="full fin-file">Factura (PDF o foto, opcional): <input id="ff-file" type="file" accept="application/pdf,image/*" /></div>
-      </div>
-      <div class="fin-sub" id="ff-hint">El IVA se guarda para tu gestor pero no cuenta en el balance.</div>
-      <div class="form-error" id="ff-err" style="display:none;"></div>
-      <button class="btn" id="ff-save" style="margin-top:10px;">GUARDAR</button>
-    </div>
-    <div class="fin-card">
-      <div class="fin-card-title">Movimientos (${view.length})</div>
-      ${view.length?view.map(e=>{
-        const sign=e.kind==='ingreso'?'+':(e.kind==='gasto'?'−':'⇄');
-        const d=String(e.date); 
-        return `<div class="fin-row">
-          <div class="fin-date">${d.slice(8,10)}/${d.slice(5,7)}</div>
-          <div class="fin-main"><b>${escapeHtml(e.concept)}</b><br><span class="team-note">${kindLabel[e.kind]} · ${escapeHtml(e.partner)}${e.category?' · '+escapeHtml(e.category):''}${e.supplier?' · '+escapeHtml(e.supplier):''}${e.vat_cents?' · IVA '+eur(e.vat_cents):''}</span><br>
-            ${e.invoice_path?`<button class="fin-link" data-fin-view="${e.id}">Ver factura</button>`:''}<button class="fin-link" data-fin-del="${e.id}">Borrar</button></div>
-          <div class="fin-amt">${sign} ${eur(e.base_cents)}</div>
-        </div>`;}).join(''):'<div class="fin-sub">Sin movimientos.</div>'}
-    </div>`;
-  document.getElementById('fin-prev').addEventListener('click',()=>{finMonth=new Date(finMonth.getFullYear(),finMonth.getMonth()-1,1);renderFinance();});
-  document.getElementById('fin-next').addEventListener('click',()=>{finMonth=new Date(finMonth.getFullYear(),finMonth.getMonth()+1,1);renderFinance();});
-  document.getElementById('fin-toggle-all').addEventListener('click',()=>{finAll=!finAll;renderFinance();});
-  document.getElementById('fin-csv').addEventListener('click',exportFinCsv);
-  const kindSel=document.getElementById('ff-kind');
-  kindSel.addEventListener('change',()=>{
-    const liq=kindSel.value==='liquidacion';
-    document.getElementById('ff-hint').textContent = liq
-      ? 'Liquidación: elige quién PAGA al otro y la cantidad en "base". Pone el balance a cero.'
-      : 'El IVA se guarda para tu gestor pero no cuenta en el balance.';
-  });
-  root.querySelectorAll('[data-fin-view]').forEach(b=>b.addEventListener('click',async()=>{
-    const e=finList.find(x=>x.id===b.getAttribute('data-fin-view')); if(!e) return;
-    const { data, error } = await sb.storage.from('facturas').createSignedUrl(e.invoice_path,120);
-    if(error||!data){ alert('No se pudo abrir la factura'); return; }
-    window.open(data.signedUrl,'_blank','noopener');
-  }));
-  root.querySelectorAll('[data-fin-del]').forEach(b=>b.addEventListener('click',async()=>{
-    const e=finList.find(x=>x.id===b.getAttribute('data-fin-del')); if(!e) return;
-    if(!confirm('¿Borrar "'+e.concept+'"? Esto recalcula el balance.')) return;
-    if(e.invoice_path) await sb.storage.from('facturas').remove([e.invoice_path]);
-    await sb.from('finance_entries').delete().eq('id',e.id);
-    await finLoad(); renderFinance();
-  }));
-  document.getElementById('ff-save').addEventListener('click',async()=>{
-    const err=document.getElementById('ff-err'); err.style.display='none';
-    const kind=kindSel.value, partner=document.getElementById('ff-partner').value;
-    const date=document.getElementById('ff-date').value;
-    const concept=document.getElementById('ff-concept').value.trim();
-    const base=toCents(document.getElementById('ff-base').value);
-    const vatRate=parseFloat(String(document.getElementById('ff-vat').value).replace(',','.'))||0;
-    const fail=m=>{err.style.display='block';err.textContent=m;};
-    if(!date) return fail('Pon la fecha.');
-    if(!concept) return fail('Pon un concepto.');
-    if(!isFinite(base)||base<=0) return fail('Pon una base imponible válida.');
-    const vat = kind==='gasto'||kind==='ingreso' ? Math.round(base*vatRate/100) : 0;
-    const file=document.getElementById('ff-file').files[0];
-    let path=null;
-    const btn=document.getElementById('ff-save'); btn.disabled=true; btn.textContent='GUARDANDO…';
-    if(file){
-      const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-      path=date.slice(0,7)+'/'+Date.now()+'_'+safe;
-      const up=await sb.storage.from('facturas').upload(path,file,{contentType:file.type||undefined});
-      if(up.error){ btn.disabled=false; btn.textContent='GUARDAR'; return fail('Error subiendo factura: '+up.error.message); }
-    }
-    const { error } = await sb.from('finance_entries').insert({
-      kind,partner,date,concept,
-      category: kind==='liquidacion'?null:document.getElementById('ff-cat').value,
-      supplier: document.getElementById('ff-supplier').value.trim()||null,
-      base_cents:base,vat_rate:kind==='liquidacion'?0:vatRate,vat_cents:vat,invoice_path:path
-    });
-    if(error){ btn.disabled=false; btn.textContent='GUARDAR'; return fail(error.message); }
-    finMonth=new Date(date.slice(0,4),parseInt(date.slice(5,7),10)-1,1);
-    await finLoad(); renderFinance();
-  });
-}
-function exportFinCsv(){
-  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const rows=[['Fecha','Tipo','Socio','Categoria','Proveedor','Concepto','Base','IVA %','IVA','Total','Factura']];
-  finList.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(e=>{
-    rows.push([e.date,e.kind,e.partner,e.category,e.supplier,e.concept,(e.base_cents/100).toFixed(2),e.vat_rate,(e.vat_cents/100).toFixed(2),((e.base_cents+e.vat_cents)/100).toFixed(2),e.invoice_path?'si':'']);
-  });
-  const csv='﻿'+rows.map(r=>r.map(q).join(';')).join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  a.download='cuentas-innit.csv'; document.body.appendChild(a); a.click(); a.remove();
 }
 
 function renderTeamDetail(box, label){
