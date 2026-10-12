@@ -487,11 +487,12 @@ $('m-save').onclick=async()=>{
 };
 
 /* ---------- recibos ---------- */
-let rates={},rstat={},bks=[],spc=[],profsAll=[],recCtx=null,noshow=new Set(),goalsBy={};
+let rates={},rstat={},bks=[],spc=[],profsAll=[],recCtx=null,noshow=new Set(),goalsBy={},closures={};
 async function loadRec(){
-  const [a,b,c,d,e,f,g]=await Promise.all([
+  const [a,b,c,d,e,f,g,cl]=await Promise.all([
     sb.from('bookings').select('*'),sb.from('spaces').select('*'),sb.from('profiles').select('*'),
-    sb.from('client_rates').select('*'),sb.from('receipt_status').select('*'),sb.from('booking_noshow').select('booking_id'),sb.from('member_goals').select('*')]);
+    sb.from('client_rates').select('*'),sb.from('receipt_status').select('*'),sb.from('booking_noshow').select('booking_id'),sb.from('member_goals').select('*'),sb.from('space_closures').select('*')]);
+  closures={};(cl.data||[]).forEach(c=>closures[c.date]=c);
   goalsBy={};(g.data||[]).forEach(r=>goalsBy[r.user_id]=r);
   noshow=new Set((f.data||[]).map(r=>r.booking_id));
   bks=a.data||[];spc=b.data||[];profsAll=c.data||[];
@@ -588,7 +589,8 @@ function vReservas(){
   for(let d=1;d<=dim;d++){const di=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
     const chips=inM.filter(b=>b.date===di).map(b=>{const w=whoB(b),s=bStatus(b);const cls=s==='falta'?'x':(w==='INNIT'||b.token_type==='fijo')?'':'ex';
       return `<span class="chip ${cls}" style="--c:${pcol(w)}" title="${esc(w)} · ${hh(b.start_hour)}–${hh(b.end_hour)} · ${esc(spName(b.space_id))}">${esc(w)} ${b.start_hour}–${b.end_hour}</span>`;}).join('');
-    cal+=`<div class="d ${di===today?'t':''}"><span class="n">${d}</span>${chips}</div>`;}
+    const cz=closures[di];
+    cal+=`<div class="d ${di===today?'t':''}"><span class="n">${d}</span>${cz?`<span class="chip x" style="text-decoration:none" title="${esc(cz.reason||'')}">Cerrado</span>`:''}${chips}</div>`;}
   const rows=inM.length?`<table><thead><tr><th>Fecha</th><th>Quién</th><th class="hide-m">Sala</th><th>Horario</th><th class="hide-m">Tipo</th><th>Estado</th></tr></thead><tbody>`+inM.map(b=>{const d=new Date(+b.date.slice(0,4),+b.date.slice(5,7)-1,+b.date.slice(8,10)),s=bStatus(b),w=whoB(b);
     return `<tr><td>${DAYS3[d.getDay()]} ${d.getDate()}</td><td><b><span class="pdot" style="background:${pcol(w)}"></span>${esc(w)}</b></td><td class="hide-m">${esc(spName(b.space_id))}</td><td class="num" style="text-align:left">${hh(b.start_hour)}–${hh(b.end_hour)}</td><td class="hide-m">${w==='INNIT'?'Equipo':b.token_type==='fijo'?'Fijo':'Extra'}</td><td><span class="tag ${s==='falta'?'bad':s==='hecha'?'good':'mute'}">${s==='falta'?'Falta':s==='hecha'?'Hecha':'Reservada'}</span></td></tr>`;}).join('')+'</tbody></table>':'<div class="empty">No hay reservas este mes.</div>';
   return header('Reservas','Quién ha venido y quién viene este mes, y lo que toca cobrar a cada uno.',monthPill())+`

@@ -366,6 +366,13 @@ img.logo{height:22px;width:auto;display:block;}
 .cal-cell.outside{opacity:0.25;cursor:default;}
 .cal-cell.today{border-color:var(--ink);}
 .cal-cell.selected{background:rgba(255,255,255,0.14);}
+.cal-cell.closed{background:repeating-linear-gradient(135deg,rgba(255,255,255,0.10) 0 3px,transparent 3px 7px);}
+.cal-cell.closed .cal-date{opacity:.55;text-decoration:line-through;}
+.closed-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:1px solid var(--ink);border-radius:10px;padding:10px 12px;margin:10px 0 4px;font-size:12px;line-height:1.45;background:repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0 4px,transparent 4px 9px);}
+.closed-banner b{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px;}
+.close-form{border:1px solid var(--hairline);border-radius:10px;padding:12px;margin-top:8px;display:grid;gap:8px;}
+.close-form label{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--ink-dim);line-height:1.45;}
+.close-form .team-note-input{background:transparent;border:none;border-bottom:1px solid var(--hairline);color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;}
 .cal-date{font-family:'Geist Mono',monospace;font-size:10px;}
 .cal-markers{display:flex;gap:2px;flex-wrap:wrap;}
 .cal-marker{width:4px;height:4px;border-radius:50%;}
@@ -945,6 +952,7 @@ const TEAM_PEOPLE = ['BRYAN','LEANDRO'];
 function colorFor(name){ return PERSON_COLORS[name] || TEAM_COLORS[name] || '#9C97A6'; }
 let accTab = 'spaces';       // 'spaces' | 'team'  (team solo para INNIT COMPANY)
 let teamList = [];           // {id,person,date,start_hour,end_hour,note}
+let closures = {};           // días cerrados por INNIT: { 'AAAA-MM-DD': {reason} }
 function isTeamUser(){ return session && session.name === 'INNIT COMPANY'; }
 
 let session = null;          // {id, email, name}
@@ -1029,6 +1037,8 @@ async function loadDomainData(){
   const nameOf = id => { const p=(profs||[]).find(x=>x.id===id); return p?p.name:'—'; };
   bookingsList = (bk||[]).map(b=>({...b, userName:nameOf(b.user_id)}));
   teamList = [];
+  const { data: cl } = await sb.from('space_closures').select('*');
+  closures = {}; (cl||[]).forEach(c=>{ closures[c.date] = c; });
   if(isTeamUser()){
     const { data: tu } = await sb.from('team_usage').select('*');
     teamList = tu || [];
@@ -1187,7 +1197,7 @@ function renderCalGrid(){
     const teamMode = accTab==='team' && isTeamUser();
     const dayEntries = teamMode ? teamList.filter(t=>t.date===iso) : bookingsList.filter(b=>b.date===iso);
     const markers = dayEntries.slice(0,8).map(e=>`<span class="cal-marker" style="background:${colorFor(teamMode ? e.person : e.userName)}"></span>`);
-    return `<div class="cal-cell ${c.outside?'outside':''} ${iso===todayIso?'today':''} ${iso===calSelected?'selected':''}" data-date="${iso}">
+    return `<div class="cal-cell ${c.outside?'outside':''} ${iso===todayIso?'today':''} ${iso===calSelected?'selected':''} ${closures[iso]?'closed':''}" data-date="${iso}"${closures[iso]?' title="Cerrado por INNIT"':''}>
       <div class="cal-date">${c.date.getDate()}</div>
       <div class="cal-markers">${markers.join('')}</div>
     </div>`;
@@ -1205,10 +1215,12 @@ function renderDayDetail(){
   const label = `${DAY_LABELS[dow]} ${d.getDate()} DE ${MONTH_NAMES[d.getMonth()].toUpperCase()}`;
   if(accTab==='team' && isTeamUser()){ renderTeamDetail(box, label); return; }
   // Días pasados: los clientes solo consultan; INNIT puede corregir.
-  const pastDay = calSelected < isoDate(new Date()) && !isTeamUser();
+  const closedDay = closures[calSelected];
+  const pastDay = (calSelected < isoDate(new Date()) || !!closedDay) && !isTeamUser();
 
   box.innerHTML = `<div class="day-detail"><div class="section-label">${label}</div>` +
-    spacesList.map(sp=>{
+    (closedDay ? `<div class="closed-banner"><div><b>Espacio cerrado</b>${escapeHtml(closedDay.reason || 'INNIT ha cerrado el espacio este día.')}</div></div>` : '') +
+    (closedDay && !isTeamUser() ? [] : spacesList).map(sp=>{
       const all = bookingsList.filter(b=>b.space_id===sp.id && b.date===calSelected);
       const rows = all.length ? all.map(s=>{
         const kind = s.token_type || (TOKEN_LIMITED.includes(s.userName) ? 'extra' : null);
@@ -1226,7 +1238,7 @@ function renderDayDetail(){
         <div id="add-${sp.id}"></div>
         ${pastDay ? '' : `<button class="small-btn" data-add="${sp.id}" style="margin-top:6px;">+ Reservar</button>`}
       </div>`;
-    }).join('') + (pastDay ? `<div class="slot-row" style="opacity:.6;margin-top:8px;">Día pasado: solo consulta.</div>` : '') + `</div>`;
+    }).join('') + (pastDay && !closedDay ? `<div class="slot-row" style="opacity:.6;margin-top:8px;">Día pasado: solo consulta.</div>` : '') + `</div>`;
 
   box.querySelectorAll('[data-cancel]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
@@ -1282,8 +1294,47 @@ function renderDayDetail(){
   });
 }
 
+function closureBlock(){
+  const c = closures[calSelected];
+  if(c) return `<div class="closed-banner"><div><b>Espacio cerrado todo el día</b>${escapeHtml(c.reason || 'Sin motivo')}</div><button class="small-btn" id="reopen-day">Reabrir</button></div>`;
+  if(calSelected < isoDate(new Date())) return '';
+  return `<button class="small-btn" id="close-day" style="margin:10px 0 4px;">Cerrar el espacio todo el día</button><div id="close-form"></div>`;
+}
+function bindClosure(){
+  const re = document.getElementById('reopen-day');
+  if(re) re.addEventListener('click', async ()=>{
+    await sb.from('space_closures').delete().eq('date', calSelected);
+    await loadDomainData(); renderAccess();
+  });
+  const cb = document.getElementById('close-day');
+  if(!cb) return;
+  cb.addEventListener('click', ()=>{
+    const holder = document.getElementById('close-form');
+    if(holder.dataset.open==='1'){ holder.innerHTML=''; holder.dataset.open='0'; return; }
+    holder.dataset.open='1';
+    const clientB = bookingsList.filter(b=>b.date===calSelected && b.userName!=='INNIT COMPANY');
+    holder.innerHTML = `<div class="close-form">
+      <input class="team-note-input" id="close-reason" maxlength="200" placeholder="Motivo (lo verán los chicos): obras, mantenimiento…" />
+      ${clientB.length ? `<label><input type="checkbox" id="close-cancel" checked> Cancelar también ${clientB.length===1?'la reserva':'las '+clientB.length+' reservas'} de ese día: ${clientB.map(b=>escapeHtml(b.userName)+' '+pad(b.start_hour)+'–'+pad(b.end_hour)).join(', ')}</label>` : '<label>Nadie tiene reservado ese día.</label>'}
+      <button class="mini-btn" id="close-confirm">Cerrar el día</button>
+      <div class="form-error" id="close-error" style="display:none;"></div>
+    </div>`;
+    document.getElementById('close-confirm').addEventListener('click', async ()=>{
+      const err = document.getElementById('close-error');
+      const reason = document.getElementById('close-reason').value.trim() || null;
+      const { error } = await sb.from('space_closures').insert({ date: calSelected, reason });
+      if(error){ err.style.display='block'; err.textContent='No se pudo cerrar: '+error.message; return; }
+      const cancel = document.getElementById('close-cancel');
+      if(cancel && cancel.checked && clientB.length){
+        await sb.from('bookings').delete().in('id', clientB.map(b=>b.id));
+      }
+      await loadDomainData(); renderAccess();
+    });
+  });
+}
+
 function renderTeamDetail(box, label){
-  box.innerHTML = `<div class="day-detail"><div class="section-label">${label} · USO EQUIPO</div>` +
+  box.innerHTML = `<div class="day-detail"><div class="section-label">${label} · USO EQUIPO</div>` + closureBlock() +
     TEAM_PEOPLE.map(person=>{
       const col = colorFor(person);
       const all = teamList.filter(t=>t.person===person && t.date===calSelected).sort((a,b)=>a.start_hour-b.start_hour);
@@ -1302,6 +1353,7 @@ function renderTeamDetail(box, label){
       </div>`;
     }).join('') + `</div>`;
 
+  bindClosure();
   box.querySelectorAll('[data-team-cancel]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       if(!confirm('¿Quitar este uso de equipo?')) return;
