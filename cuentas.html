@@ -7,152 +7,184 @@
 <title>INNIT · Cuentas</title>
 <link rel="icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#ffffff; --card:#f5f5f7; --card2:#ececf0; --ink:#0b0b0d; --dim:#6b6b76; --line:#e4e4ea;
-  --side:#000; --side-ink:#e9e9ee; --side-dim:#8d8d98; --side-active:#1c1c20;
-  --accent:#2200ff; --accent-soft:#c9c2ff; --good:#0f9d58; --good-bg:#e1f5ea; --bad:#d93025; --bad-bg:#fde7e5; --warn:#b35c00; --warn-bg:#ffeed8;
+  --bg:#050505; --w:#121212; --w2:#1b1b1b; --w3:#262626; --line:rgba(255,255,255,.07);
+  --ink:#f5f3ee; --dim:#8f8f8f; --faint:#5c5c5c;
+  --g:#f5f3ee; --g-hi:#ffffff; --g-mid:#8a8a8a; --g-lo:#4a4a4a; --g-deep:#222222; --g-ink:#000000;
+  --bad:#ff6b6b; --warn:#cfcfcf;
+  --sans:'Geist',system-ui,sans-serif; --mono:'Geist Mono',ui-monospace,monospace; --r:24px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
-button{font-family:inherit;cursor:pointer}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--g-hi);outline-offset:3px;border-radius:8px}
 .app{display:flex;min-height:100vh}
 /* sidebar */
-.side{width:195px;flex:0 0 195px;background:var(--side);color:var(--side-ink);padding:18px 8px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
-.brand{font-weight:800;font-size:19px;letter-spacing:.04em;padding:0 10px 18px;display:flex;align-items:center;gap:8px}
-.brand small{font-size:9px;font-weight:600;letter-spacing:.16em;color:var(--side-dim);border:1px solid #333;border-radius:20px;padding:2px 7px}
-.nav button{width:100%;display:flex;align-items:center;gap:11px;background:none;border:none;color:var(--side-dim);padding:10px 12px;border-radius:10px;font-size:13px;font-weight:500;text-align:left;margin-bottom:2px}
+.side{width:200px;flex:0 0 200px;background:#000;border-right:1px solid var(--line);padding:18px 8px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{padding:2px 10px 20px;display:flex;align-items:center;gap:10px}
+.brand img{height:16px}
+.brand small{font-family:var(--mono);font-size:10px;color:var(--g-hi);border:1px solid var(--g-lo);border-radius:20px;padding:2px 8px}
+.nav button{width:100%;display:flex;align-items:center;gap:11px;background:none;border:none;color:var(--dim);padding:10px 12px;border-radius:12px;font-size:13.5px;font-weight:500;text-align:left;margin-bottom:2px}
 .nav button:hover{color:#fff}
-.nav button.on{background:var(--side-active);color:#fff}
+.nav button.on{background:var(--g);color:var(--g-ink);font-weight:600}
 .nav svg{width:16px;height:16px;flex:0 0 16px}
 .side-foot{margin-top:auto;padding:10px;display:flex;flex-direction:column;gap:10px}
 .who{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600}
-.who i{width:28px;height:28px;border-radius:50%;background:#7a5cff;display:grid;place-items:center;font-style:normal;font-size:12px}
-.side-foot a,.side-foot button{color:var(--side-dim);font-size:12px;background:none;border:none;text-align:left;text-decoration:none;padding:0}
+.who i{width:28px;height:28px;border-radius:50%;background:var(--g);color:var(--g-ink);display:grid;place-items:center;font-style:normal;font-size:12px}
+.side-foot a,.side-foot button{color:var(--dim);font-size:12.5px;background:none;border:none;text-align:left;text-decoration:none;padding:0}
 .side-foot a:hover,.side-foot button:hover{color:#fff}
 /* main */
 .main{flex:1;min-width:0;padding:22px 24px 60px;max-width:1500px}
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
-h1{font-size:28px;font-weight:700;letter-spacing:-.02em}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+h1{font-size:30px;font-weight:600;letter-spacing:-.02em}
 .sub{color:var(--dim);font-size:13px;margin-top:6px}
-.pill{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:12px;padding:6px 8px;font-size:12px;font-weight:500}
-.pill button{background:none;border:none;font-size:16px;line-height:1;padding:4px 7px;border-radius:8px;color:var(--ink)}
-.pill button:hover{background:var(--card2)}
-.pill button:disabled{opacity:.3;cursor:default}
-.pill span{min-width:110px;text-align:center}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.card{background:var(--card);border-radius:18px;padding:16px 18px}
-.kpi .l{font-size:12px;color:var(--dim)}
-.kpi .v{font-size:30px;font-weight:700;letter-spacing:-.02em;margin-top:10px}
-.kpi .n{font-size:12px;color:var(--dim);margin-top:8px}
-.tag{display:inline-block;font-size:11px;font-weight:600;border-radius:7px;padding:2px 7px;margin-right:6px}
-.tag.good{background:var(--good-bg);color:var(--good)} .tag.bad{background:var(--bad-bg);color:var(--bad)} .tag.warn{background:var(--warn-bg);color:var(--warn)} .tag.mute{background:var(--card2);color:var(--dim)}
-.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
-.strip .card{padding:12px 16px;display:flex;justify-content:space-between;font-size:13px;border-radius:12px}
-.strip b{font-weight:700}
+.lbl{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.pill{display:flex;align-items:center;gap:6px;background:var(--w);border:1px solid var(--line);border-radius:999px;padding:4px 6px;font-size:12.5px;font-family:var(--mono)}
+.pill button{background:none;border:none;font-size:16px;line-height:1;width:30px;height:30px;border-radius:50%;color:var(--ink)}
+.pill button:hover{background:var(--w3)}
+.pill span{min-width:120px;text-align:center}
+.card{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 40%),var(--w);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;min-width:0}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi .l{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.kpi .v{font-family:var(--mono);font-size:30px;font-weight:500;letter-spacing:-.03em;margin-top:12px;line-height:1.1}
+.kpi .n{font-size:12.5px;color:var(--dim);margin-top:8px}
+.kpi.hero{background:linear-gradient(160deg,#ffffff,#c4c4c4);color:var(--g-ink);border-color:transparent}
+.kpi.hero .l,.kpi.hero .n{color:rgba(0,0,0,.7)}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px;margin-right:6px;white-space:nowrap}
+.tag.good{background:var(--g-deep);color:var(--g-hi)} .tag.bad{background:rgba(255,107,107,.14);color:var(--bad)} .tag.warn{background:rgba(255,255,255,.08);color:var(--warn)} .tag.mute{background:var(--w3);color:var(--dim)}
+.kpi.hero .tag{background:rgba(0,0,0,.15);color:var(--g-ink)}
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px}
+.strip .card{padding:13px 18px;display:flex;justify-content:space-between;font-size:13px;border-radius:16px}
+.strip b{font-weight:500;font-family:var(--mono)}
 .two{display:grid;grid-template-columns:1.65fr 1fr;gap:12px;margin-top:12px}
-.card h2{font-size:16px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
-.card h2 a,.link{font-size:11px;font-weight:500;color:var(--ink);background:none;border:none;text-decoration:none}
+.card h2{font-size:15.5px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card h2 a,.link{font-size:12px;font-weight:500;color:var(--g-hi);background:none;border:none;text-decoration:none}
 .bars{display:flex;align-items:flex-end;gap:14px;height:190px;margin-top:22px}
-.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;font-size:11px;color:var(--dim)}
-.bar .val{color:var(--ink);font-size:11px;font-weight:500;white-space:nowrap}
-.bar .col{width:100%;border-radius:8px;background:var(--accent-soft);min-height:6px}
-.bar.cur .col{background:var(--accent)}
-.legend{font-size:11px;color:var(--dim);margin-top:14px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;font-size:11px;color:var(--dim);font-family:var(--mono)}
+.bar .val{color:var(--ink);font-size:11px;white-space:nowrap}
+.bar .col{width:min(34px,100%);border-radius:8px 8px 0 0;background:var(--g-lo);min-height:4px}
+.bar.cur .col{background:var(--g)}
+.legend{font-size:11.5px;color:var(--dim);margin-top:14px}
 .attn-item{display:flex;gap:12px;align-items:center;padding:11px 0}
-.attn-item .ic{width:34px;height:34px;border-radius:50%;background:var(--warn-bg);color:var(--warn);display:grid;place-items:center;font-weight:700;flex:0 0 34px}
-.attn-item .t{font-size:13px;font-weight:500}.attn-item .s{font-size:11px;color:var(--dim);margin-top:2px}
-.attn-item.ok .ic{background:var(--good-bg);color:var(--good)}
-.cat{margin-top:12px}.cat .r{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
-.cat .t{height:7px;background:var(--card2);border-radius:5px;overflow:hidden}.cat .t i{display:block;height:100%;background:var(--accent);border-radius:5px}
+.attn-item .ic{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);color:var(--warn);display:grid;place-items:center;font-weight:700;flex:0 0 34px}
+.attn-item .t{font-size:13px;font-weight:500}.attn-item .s{font-size:11.5px;color:var(--dim);margin-top:2px}
+.attn-item.ok .ic{background:var(--g-deep);color:var(--g-hi)}
+.cat{margin-top:12px}.cat .r{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+.cat .r b{font-family:var(--mono);font-weight:500}
+.cat .t{height:8px;background:var(--g-deep);border-radius:5px;overflow:hidden}.cat .t i{display:block;height:100%;background:var(--g);border-radius:5px}
 /* table */
 .tbl{margin-top:12px;overflow-x:auto}
 table{width:100%;border-collapse:separate;border-spacing:0 6px;margin-top:8px}
-th{font-size:11px;font-weight:500;color:var(--dim);text-align:left;padding:4px 12px}
-td{background:#fff;padding:13px 12px;font-size:13px;vertical-align:middle}
-td:first-child{border-radius:10px 0 0 10px}td:last-child{border-radius:0 10px 10px 0}
+th{font-size:11px;font-weight:500;color:var(--dim);text-align:left;padding:4px 12px;font-family:var(--mono)}
+td{background:var(--w2);padding:13px 12px;font-size:13px;vertical-align:middle}
+td:first-child{border-radius:12px 0 0 12px}td:last-child{border-radius:0 12px 12px 0}
 td.num,th.num{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+td.num{font-family:var(--mono)}
 td b{font-weight:600}
-.row-actions button{background:none;border:none;color:var(--dim);font-size:12px;text-decoration:underline;margin-left:10px}
+.row-actions button{background:none;border:none;color:var(--dim);font-size:12px;text-decoration:underline;margin-left:10px;font-family:var(--sans)}
 .row-actions button:hover{color:var(--ink)}
 .empty{color:var(--dim);font-size:13px;padding:18px 4px}
 .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600}
-.btn:hover{opacity:.88}.btn.ghost{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}.btn:disabled{opacity:.5}
+.btn{background:var(--g);color:var(--g-ink);border:none;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:600}
+.btn:hover{filter:brightness(1.08)}.btn.ghost{background:none;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}.btn:disabled{opacity:.5}
 /* socios */
 .partners{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.big-balance{font-size:34px;font-weight:700;letter-spacing:-.02em;margin-top:12px}
+.big-balance{font-family:var(--mono);font-size:30px;font-weight:500;letter-spacing:-.03em;margin-top:12px}
+/* reservas */
+.clients{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:12px}
+.client .nm{font-size:19px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.client .mini3{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.client .mini3 .bad b{color:var(--bad)}
+.client .mini3 div{background:var(--w2);border-radius:14px;padding:10px 12px}
+.client .mini3 b{display:block;font-family:var(--mono);font-size:20px;font-weight:500;margin-top:4px}
+.client .ln{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--line)}
+.client .ln b{font-family:var(--mono);font-weight:500}
+.client .tot{font-family:var(--mono);font-size:28px;font-weight:500;letter-spacing:-.03em;margin:12px 0 14px}
+.client .tot span{font-family:var(--sans);font-size:12px;color:var(--dim);letter-spacing:0;margin-left:4px}
+.client .acts{display:flex;gap:6px;flex-wrap:wrap}
+.btn.sm{padding:8px 13px;font-size:12px}
+.mcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:14px}
+.mcal .h{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center;padding-bottom:2px}
+.mcal .d{background:var(--w2);border-radius:12px;min-height:84px;padding:7px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.mcal .d.o{background:none}
+.mcal .d.t{box-shadow:inset 0 0 0 1.5px var(--g)}
+.mcal .n{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.chip{font-size:11px;font-weight:600;border-radius:7px;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--c,#d8d8d8);color:#000}
+.chip.ex{background:none;color:var(--c,#d8d8d8);box-shadow:inset 0 0 0 1.5px var(--c,#d8d8d8)}
+.pdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px}
+.chip.x{background:none;color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,107,107,.5);text-decoration:line-through}
+.keyrow{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-top:12px}
+.keyrow .chip{display:inline-block;margin-right:6px}
 /* modal */
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
 .scrim.on{display:flex}
-.modal{background:#fff;border-radius:20px;width:100%;max-width:520px;max-height:92vh;overflow:auto;padding:22px}
-.modal h3{font-size:20px;font-weight:700;margin-bottom:14px}
+.modal{background:var(--w);border:1px solid var(--line);border-radius:24px;width:100%;max-width:520px;max-height:92vh;overflow:auto;padding:22px}
+.modal h3{font-size:19px;font-weight:600;margin-bottom:14px}
 .f{display:grid;grid-template-columns:1fr 1fr;gap:10px}.f .full{grid-column:1/-1}
-.f label{font-size:11px;color:var(--dim);display:block;margin-bottom:5px}
-.f input,.f select{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 11px;font-size:13px;font-family:inherit}
-.f input:focus,.f select:focus{outline:2px solid var(--accent);border-color:transparent}
-.preview{background:var(--card);border-radius:12px;padding:11px 13px;font-size:12px;color:var(--dim);margin-top:12px;line-height:1.5}
+.f label{font-size:11.5px;color:var(--dim);display:block;margin-bottom:5px;font-family:var(--mono)}
+.f input,.f select{width:100%;border:1px solid transparent;background:var(--w2);color:var(--ink);border-radius:12px;padding:11px 12px;font-size:13px;font-family:inherit}
+.f select option{background:#fff;color:#111}
+.f input:focus,.f select:focus{outline:none;border-color:var(--g-mid)}
+.f input{color-scheme:dark}
+.preview{background:var(--w2);border-radius:14px;padding:11px 13px;font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.5}
+.preview b{color:var(--ink)}
 .err{color:var(--bad);font-size:12px;margin-top:10px;min-height:14px}
 .mfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
-/* recibos */
-.clients{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-top:4px}
-.client .nm{font-size:18px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
-.client .ln{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)}
-.client .ln:last-of-type{border-bottom:none}
-.client .tot{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:10px 0 12px}
-.client .acts{display:flex;gap:6px;flex-wrap:wrap}
-.btn.sm{padding:8px 12px;font-size:12px;border-radius:9px}
-.rwrap{max-width:780px}
-.rec{background:#fff;color:#0b0b0d;width:720px;max-width:100%;padding:36px;font-family:'Inter',sans-serif}
+/* recibo: documento claro para enviar al cliente */
+.rec{background:#fff;color:#0b0b0d;width:720px;max-width:100%;padding:36px;font-family:var(--sans)}
 .rec .rh{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #0b0b0d;padding-bottom:16px}
 .rec .rh img{height:34px}
 .rec .rh .rt{text-align:right;font-size:11px;color:#6b6b76;line-height:1.5}
-.rec h4{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:22px}
+.rec h4{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-top:22px}
 .rec .rm{font-size:13px;color:#6b6b76;margin-top:4px}
 .rec .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:16px}
 .rec .cal .h{font-size:10px;color:#6b6b76;text-align:center;font-weight:600}
-.rec .cal .d{aspect-ratio:2.3;border-radius:8px;background:#f5f5f7;font-size:12px;display:flex;align-items:center;justify-content:center;color:#444}
+.rec .cal .d{aspect-ratio:2.3;border-radius:8px;background:#f2f2f2;font-size:12px;display:flex;align-items:center;justify-content:center;color:#444}
 .rec .cal .d.o{background:transparent}
-.rec .cal .d.f{background:#0b0b0d;color:#fff;font-weight:700}
-.rec .cal .d.e{background:#2200ff;color:#fff;font-weight:700}
+.rec .cal .d.f{background:var(--c,#0b0b0d);color:#000;font-weight:700}
+.rec .cal .d.e{background:#fff;color:#0b0b0d;font-weight:700;box-shadow:inset 0 0 0 2px var(--c,#0b0b0d)}
 .rec .lg{display:flex;gap:16px;font-size:11px;color:#6b6b76;margin-top:10px}
 .rec .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .rec table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12px}
-.rec th{text-align:left;color:#6b6b76;font-weight:500;padding:6px 4px;border-bottom:1px solid #e4e4ea}
+.rec th{text-align:left;color:#6b6b76;font-weight:500;padding:6px 4px;border-bottom:1px solid #e4e4ea;font-family:var(--sans)}
 .rec td{background:none;padding:8px 4px;border-bottom:1px solid #f0f0f3;border-radius:0}
 .rec td:first-child,.rec td:last-child{border-radius:0}
-.rec .sum{margin-top:18px;margin-left:auto;width:320px;font-size:13px}
+.rec .sum{margin-top:18px;margin-left:auto;width:min(420px,100%);font-size:13px}
+.rec .sum div span:last-child{white-space:nowrap;padding-left:12px}
 .rec .sum div{display:flex;justify-content:space-between;padding:5px 0}
 .rec .sum .t{border-top:2px solid #0b0b0d;margin-top:6px;padding-top:10px;font-size:18px;font-weight:800}
 .rec .stt{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:4px 10px;margin-top:14px}
-.rec .stt.p{background:#e1f5ea;color:#0f9d58}.rec .stt.n{background:#ffeed8;color:#b35c00}
+.rec .stt.p{background:#ececec;color:#111111}.rec .stt.n{background:#f3f3f3;color:#555555}
 .rec .rf{margin-top:24px;font-size:10.5px;color:#8d8d98;line-height:1.5;border-top:1px solid #e4e4ea;padding-top:12px}
-.scrim.big .modal{max-width:820px;background:#ececf0}
-.scrim.big .modal{overflow:hidden}
-.scrim.big .recscroll{overflow:auto;border-radius:12px;max-height:calc(92vh - 130px)}
+.scrim.big .modal{max-width:820px;overflow:hidden}
+.scrim.big .recscroll{overflow:auto;border-radius:14px;max-height:calc(92vh - 130px)}
 @media print{
   body *{visibility:hidden}
   #rec-doc,#rec-doc *{visibility:visible}
   #rec-doc{position:absolute;left:0;top:0;width:100%}
 }
 /* login */
-.login{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px;background:#000}
-.login .box{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:360px}
+.login{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.login .box{background:var(--w);border:1px solid var(--line);border-radius:24px;padding:28px;width:100%;max-width:360px}
 .login h1{font-size:22px}.login .f{grid-template-columns:1fr;margin-top:16px}
 .denied{padding:60px 20px;text-align:center;color:var(--dim)}
-@media(max-width:1000px){
+@media(max-width:1100px){
   .kpis,.strip{grid-template-columns:1fr 1fr}.two,.partners{grid-template-columns:1fr}
 }
 @media(max-width:760px){
   .app{flex-direction:column}
-  .side{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px;gap:6px;flex:none}
+  .side{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px;gap:6px;flex:none;border-right:none;border-bottom:1px solid var(--line)}
   .brand{padding:0 8px}.nav{display:flex;gap:2px;flex-wrap:wrap}.nav button{width:auto;padding:8px 10px}.nav button span{display:none}
   .side-foot{margin:0 0 0 auto;flex-direction:row;align-items:center}.who span{display:none}
-  .main{padding:16px 14px 60px}.top{flex-direction:column}h1{font-size:24px}
-  .kpis,.strip{grid-template-columns:1fr 1fr}.kpi .v{font-size:22px}
+  .main{padding:16px 14px 60px}.top{flex-direction:column;align-items:flex-start}h1{font-size:24px}
+  .kpis,.strip{grid-template-columns:1fr 1fr}.kpi .v{font-size:21px}
   th.hide-m,td.hide-m{display:none}.bars{gap:6px}
+  td{padding:11px 8px;font-size:12.5px}th{padding:4px 8px}td:first-child{white-space:nowrap}
+  .mcal{gap:3px}.mcal .d{min-height:46px;padding:4px;border-radius:8px}
+  .mcal .chip{font-size:0;padding:0;height:6px;border-radius:3px}
 }
 </style>
 </head>
@@ -168,16 +200,17 @@ td b{font-weight:600}
     </div>
     <div class="err" id="l-err"></div>
     <button class="btn" id="l-go" style="width:100%;margin-top:6px">Entrar</button>
+    <a href="index.html?acceso=1" style="display:block;text-align:center;margin-top:12px;font-size:12.5px;color:var(--dim)">¿Olvidaste tu contraseña?</a>
   </div>
 </div>
 
 <div class="app" id="app" style="display:none">
   <aside class="side">
-    <div class="brand">INNIT <small>CUENTAS</small></div>
+    <div class="brand"><img src="logo-innit-white.png" alt="INNIT"><small>Cuentas</small></div>
     <nav class="nav" id="nav">
-      <button data-v="resumen" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Resumen</span></button>
+      <button data-v="res" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10.5h17"/></svg><span>Reservas</span></button>
+      <button data-v="resumen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Gastos</span></button>
       <button data-v="mov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Movimientos</span></button>
-      <button data-v="rec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Recibos</span></button>
       <button data-v="socios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M17 14.2c2.4 0 4 1.8 4 4.3"/></svg><span>Socios</span></button>
       <button data-v="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg><span>Exportar</span></button>
     </nav>
@@ -215,7 +248,10 @@ td b{font-weight:600}
   <div class="modal">
     <h3 id="rt-title">Tarifa</h3>
     <div class="f">
-      <div class="full"><label>Cuota fija mensual (base, €) — días fijos</label><input id="rt-fixed" inputmode="decimal" placeholder="0,00"></div>
+      <div><label>Los días fijos se cobran</label><select id="rt-mode"><option value="dia">Por día fijo (semanal)</option><option value="mes">Cuota fija al mes</option></select></div>
+      <div id="rt-day-w"><label>Precio por día fijo (base, €)</label><input id="rt-day" inputmode="decimal" placeholder="0,00"></div>
+      <div id="rt-fixed-w"><label>Cuota fija mensual (base, €)</label><input id="rt-fixed" inputmode="decimal" placeholder="0,00"></div>
+      <div><label>Cliente fijo desde</label><input id="rt-start" type="date"></div>
       <div><label>Precio por extra (base, €)</label><input id="rt-extra" inputmode="decimal" placeholder="0,00"></div>
       <div><label>Extra se cobra por</label><select id="rt-unit"><option value="dia">Día reservado</option><option value="hora">Hora reservada</option></select></div>
       <div><label>IVA %</label><input id="rt-vat" inputmode="decimal" value="21"></div>
@@ -232,7 +268,7 @@ td b{font-weight:600}
       <button class="btn ghost" id="rc-close">Cerrar</button>
       <button class="btn ghost" id="rc-print">Imprimir / PDF</button>
       <button class="btn ghost" id="rc-png">Descargar imagen</button>
-      <button class="btn" id="rc-wa" style="background:#1fa855">Enviar por WhatsApp</button>
+      <button class="btn" id="rc-wa">Enviar por WhatsApp</button>
     </div>
     <div class="err" id="rc-err" style="text-align:right"></div>
   </div>
@@ -244,7 +280,7 @@ const SB_URL='https://mjmffatrtiieiqxyzwxj.supabase.co', SB_KEY='sb_publishable_
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const CATS=['Luz','Agua','Alarma','Limpieza','Internet','Alquiler','Obras / pintura','Mobiliario','Equipo','Material','Otros'];
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-let me=null, list=[], view='resumen', cur=new Date(); cur=new Date(cur.getFullYear(),cur.getMonth(),1);
+let me=null, list=[], view='res', cur=new Date(); cur=new Date(cur.getFullYear(),cur.getMonth(),1);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const eur=c=>(c/100).toLocaleString('es-ES',{style:'currency',currency:'EUR'});
@@ -316,12 +352,12 @@ function rowsHtml(rows,actions){
 function render(){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
   const m=$('main');
-  if(view==='resumen') m.innerHTML=vResumen();
+  if(view==='res') m.innerHTML=vReservas();
+  else if(view==='resumen') m.innerHTML=vResumen();
   else if(view==='mov') m.innerHTML=vMov();
   else if(view==='socios') m.innerHTML=vSocios();
-  else if(view==='rec') m.innerHTML=vRecibos();
   else m.innerHTML=vExport();
-  bindPill(); bindActions(); if(view==='rec') bindRec();
+  bindPill(); bindActions(); if(view==='res') bindRec();
   const nb=$('new-btn'); if(nb) nb.onclick=openModal;
 }
 function vResumen(){
@@ -341,9 +377,9 @@ function vResumen(){
   const noInv=list.filter(e=>e.kind==='gasto'&&!e.invoice_path);
   const attn=noInv.length?noInv.slice(0,4).map(e=>`<div class="attn-item"><div class="ic">!</div><div><div class="t">Falta la factura: ${esc(e.concept)}</div><div class="s">${esc(e.partner)} · ${eur(e.base_cents)} · ${String(e.date).slice(8,10)}/${String(e.date).slice(5,7)}</div></div></div>`).join('')
     :'<div class="attn-item ok"><div class="ic">✓</div><div><div class="t">Todo en orden</div><div class="s">Todos los gastos tienen factura adjunta.</div></div></div>';
-  return header('Resumen','Los gastos de INNIT y el balance entre socios, solo base imponible.',monthPill()+'<button class="btn" id="new-btn">+ Nuevo movimiento</button>')+`
+  return header('Gastos','Los gastos de INNIT y el balance entre socios, solo base imponible.',monthPill()+'<button class="btn" id="new-btn">+ Nuevo movimiento</button>')+`
   <div class="kpis">
-    <div class="card kpi"><div class="l">Balance entre socios</div><div class="v" style="font-size:${good?30:22}px;line-height:1.15">${good?'A cero':eur(Math.abs(A.bal.BRYAN))}</div><div class="n"><span class="tag ${good?'good':'warn'}">${good?'Al día':'Pendiente'}</span>${good?'Nadie debe nada':(A.bal.BRYAN>0?'LEANDRO → BRYAN':'BRYAN → LEANDRO')}</div></div>
+    <div class="card kpi hero"><div class="l">Balance entre socios</div><div class="v" style="font-size:${good?30:22}px;line-height:1.15">${good?'A cero':eur(Math.abs(A.bal.BRYAN))}</div><div class="n"><span class="tag ${good?'good':'warn'}">${good?'Al día':'Pendiente'}</span>${good?'Nadie debe nada':(A.bal.BRYAN>0?'LEANDRO → BRYAN':'BRYAN → LEANDRO')}</div></div>
     <div class="card kpi"><div class="l">Gastos del mes</div><div class="v">${eur(M.gastos)}</div><div class="n">${inM.filter(e=>e.kind==='gasto').length} facturas · sin IVA</div></div>
     <div class="card kpi"><div class="l">Ingresos del mes</div><div class="v">${eur(M.ingresos)}</div><div class="n">${inM.filter(e=>e.kind==='ingreso').length} movimientos</div></div>
     <div class="card kpi"><div class="l">Coste neto acumulado</div><div class="v">${eur(A.net)}</div><div class="n">${eur(Math.round(A.net/2))} por socio</div></div>
@@ -451,48 +487,131 @@ $('m-save').onclick=async()=>{
 };
 
 /* ---------- recibos ---------- */
-const CLIENTS=['HDMI','JOVAEL'];
-let rates={},rstat={},bks=[],spc=[],profsAll=[],recCtx=null;
+let rates={},rstat={},bks=[],spc=[],profsAll=[],recCtx=null,noshow=new Set(),goalsBy={};
 async function loadRec(){
-  const [a,b,c,d,e]=await Promise.all([
+  const [a,b,c,d,e,f,g]=await Promise.all([
     sb.from('bookings').select('*'),sb.from('spaces').select('*'),sb.from('profiles').select('*'),
-    sb.from('client_rates').select('*'),sb.from('receipt_status').select('*')]);
+    sb.from('client_rates').select('*'),sb.from('receipt_status').select('*'),sb.from('booking_noshow').select('booking_id'),sb.from('member_goals').select('*')]);
+  goalsBy={};(g.data||[]).forEach(r=>goalsBy[r.user_id]=r);
+  noshow=new Set((f.data||[]).map(r=>r.booking_id));
   bks=a.data||[];spc=b.data||[];profsAll=c.data||[];
   rates={};(d.data||[]).forEach(r=>rates[r.client_name]=r);
   rstat={};(e.data||[]).forEach(r=>rstat[r.client_name+'|'+r.month]=r);
 }
-function calc(name,d){
-  const mk=mkey(d),uid=(profsAll.find(p=>p.name===name)||{}).id;
-  const mine=bks.filter(b=>b.user_id===uid&&String(b.date).slice(0,7)===mk).sort((x,y)=>x.date.localeCompare(y.date)||x.start_hour-y.start_hour);
+const pdD=s=>new Date(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10));
+const monD=x=>{const m=new Date(x.getFullYear(),x.getMonth(),x.getDate());m.setDate(m.getDate()-((m.getDay()+6)%7));return m;};
+const isoX=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+/* Desde qué semana es cliente fijo: la fecha de Objetivos/Tarifa o su primera reserva */
+function startOf(uid){const g=goalsBy[uid];const all=bks.filter(b=>b.user_id===uid).map(b=>b.date).sort();
+  return g&&g.start_date?monD(pdD(g.start_date)):(all.length?monD(pdD(all[0])):null);}
+/* Recibo de un mes. Las semanas se cobran en el mes en el que cae su lunes (ninguna se cuenta dos veces). */
+function calcBase(name,d){
+  const mk=mkey(d),uid=(profsAll.find(p=>p.name===name)||{}).id,g=goalsBy[uid]||{fijo_week:0};
+  const allMine=bks.filter(b=>b.user_id===uid).sort((x,y)=>x.date.localeCompare(y.date)||x.start_hour-y.start_hour);
+  const mine=allMine.filter(b=>String(b.date).slice(0,7)===mk);
   const fijo=mine.filter(b=>b.token_type==='fijo'),extra=mine.filter(b=>b.token_type!=='fijo');
-  const r=rates[name]||{fixed_fee_cents:0,extra_cents:0,extra_unit:'dia',vat_rate:21,phone:''};
+  const r=Object.assign({fixed_fee_cents:0,extra_cents:0,extra_unit:'dia',vat_rate:21,phone:'',fixed_mode:'dia',fijo_day_cents:0},rates[name]||{});
   const fijoDays=new Set(fijo.map(b=>b.date)).size,extraDays=new Set(extra.map(b=>b.date)).size;
   const extraHours=extra.reduce((s,b)=>s+(b.end_hour-b.start_hour),0);
-  const units=r.extra_unit==='hora'?extraHours:extraDays;
-  const extraTotal=units*r.extra_cents,base=r.fixed_fee_cents+extraTotal,vat=Math.round(base*r.vat_rate/100);
+  const units=r.extra_unit==='hora'?extraHours:extraDays,extraTotal=units*r.extra_cents;
+  const start=startOf(uid),y=d.getFullYear(),m=d.getMonth(),weeks=[];
+  for(let x=1;x<=new Date(y,m+1,0).getDate();x++){const dt=new Date(y,m,x);if(dt.getDay()===1&&start&&dt>=start)weeks.push(dt);}
+  const type={};allMine.forEach(b=>{if(!type[b.date])type[b.date]=b.token_type||'extra';});
+  const thisMon=monD(new Date()),fw=g.fijo_week||0;let booked=0,unbooked=0,pending=0;
+  weeks.forEach(w=>{let f=0;for(let i=0;i<7;i++){const x=new Date(w);x.setDate(x.getDate()+i);if(type[isoX(x)]==='fijo')f++;}
+    f=Math.min(f,fw);booked+=f;const rest=fw-f;if(w<thisMon)unbooked+=rest;else pending+=rest;});
+  const due=weeks.length*fw,active=!!start&&new Date(y,m+1,0)>=start;
+  let chargedDays=0,fixedCharge=0;
+  if(r.fixed_mode==='dia'){chargedDays=due;fixedCharge=chargedDays*r.fijo_day_cents;}
+  else fixedCharge=active?r.fixed_fee_cents:0;
+  const base=fixedCharge+extraTotal,vat=Math.round(base*r.vat_rate/100);
   return{name,mk,mine,fijo,extra,fijoDays,extraDays,extraHours,units,extraTotal,base,vat,total:base+vat,r,
+    weeks:weeks.length,due,booked,unbooked,pending,chargedDays,fixedCharge,start,
     paid:!!(rstat[name+'|'+mk]&&rstat[name+'|'+mk].paid)};
+}
+/* Igual, más lo que quede sin pagar de meses anteriores */
+function calc(name,d){
+  const c=calcBase(name,d),prev=[];
+  if(c.start){for(let x=new Date(c.start.getFullYear(),c.start.getMonth(),1),n=0;x<new Date(d.getFullYear(),d.getMonth(),1)&&n<36;x=new Date(x.getFullYear(),x.getMonth()+1,1),n++){
+    const p=calcBase(name,x);if(!p.paid&&p.total>0)prev.push({mk:p.mk,label:MONTHS[x.getMonth()]+' '+x.getFullYear(),total:p.total});}}
+  const prevTotal=prev.reduce((s,p)=>s+p.total,0);
+  return Object.assign(c,{prev,prevTotal,toPay:(c.paid?0:c.total)+prevTotal});
 }
 const spName=id=>(spc.find(s=>s.id===id)||{}).name||'Espacio';
 const hh=h=>String(h).padStart(2,'0')+':00';
-function vRecibos(){
-  const cards=CLIENTS.map(n=>{const c=calc(n,cur);
-    return `<div class="card client"><div class="nm">${n}<span class="tag ${c.paid?'good':'warn'}" style="margin:0">${c.paid?'Pagado':'Pendiente'}</span></div>
-    <div class="ln"><span>Días fijos</span><b>${c.fijoDays}</b></div>
-    <div class="ln"><span>Días extra</span><b>${c.extraDays} · ${c.extraHours} h</b></div>
-    <div class="ln"><span>Cuota fija</span><b>${eur(c.r.fixed_fee_cents)}</b></div>
+const TEAMN='INNIT COMPANY';
+const clientNames=()=>profsAll.filter(p=>p.name!==TEAMN).map(p=>p.name).sort();
+const DAYS3=['dom','lun','mar','mié','jue','vie','sáb'];
+const PCOL={'HDMI':'#4a9eff','JOVAEL':'#4ade80','INNIT COMPANY':'#d8d8d8','INNIT':'#d8d8d8'};const pcol=n=>PCOL[n]||'#d8d8d8';
+const isoD=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function bStatus(b){
+  if(noshow.has(b.id))return'falta';
+  const now=new Date(),t=isoD(now);
+  return(b.date<t||(b.date===t&&b.end_hour<=now.getHours()))?'hecha':'reservada';
+}
+/* Faltas del mes de un cliente: reservas marcadas como falta + días fijos que no reservó en semanas ya cerradas */
+function faltasOf(name,d){
+  const uid=(profsAll.find(p=>p.name===name)||{}).id,g=goalsBy[uid];if(!uid)return 0;
+  const mine=bks.filter(b=>b.user_id===uid).sort((x,y)=>x.date.localeCompare(y.date)||x.start_hour-y.start_hour);
+  const mk=mkey(d),type={};mine.forEach(b=>{if(!type[b.date])type[b.date]=b.token_type||'extra';});
+  const noshowDays=new Set(mine.filter(b=>noshow.has(b.id)&&b.date.slice(0,7)===mk).map(b=>b.date)).size;
+  if(!g||!g.fijo_week)return noshowDays;
+  const pdD=s=>new Date(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10)),mon=x=>{const m=new Date(x.getFullYear(),x.getMonth(),x.getDate());m.setDate(m.getDate()-((m.getDay()+6)%7));return m;};
+  const start=g.start_date?mon(pdD(g.start_date)):(mine.length?mon(pdD(mine[0].date)):null);if(!start)return noshowDays;
+  const last=mon(new Date());last.setDate(last.getDate()-7);let auto=0;
+  for(let w=new Date(start);w<=last;w.setDate(w.getDate()+7)){if(mkey(w)!==mk)continue;let f=0;
+    for(let i=0;i<7;i++){const x=new Date(w);x.setDate(x.getDate()+i);if(type[isoD(x)]==='fijo')f++;}auto+=Math.max(0,g.fijo_week-f);}
+  return noshowDays+auto;
+}
+const whoB=b=>{const n=(profsAll.find(p=>p.id===b.user_id)||{}).name||'—';return n===TEAMN?'INNIT':n;};
+function vReservas(){
+  const mk=mkey(cur),names=clientNames();
+  const inM=bks.filter(b=>String(b.date).slice(0,7)===mk).sort((x,y)=>x.date.localeCompare(y.date)||x.start_hour-y.start_hour);
+  const H=b=>b.end_hour-b.start_hour;
+  const hDone=inM.filter(b=>bStatus(b)==='hecha').reduce((s,b)=>s+H(b),0),hAll=inM.reduce((s,b)=>s+H(b),0);
+  const teamCount=inM.filter(b=>whoB(b)==='INNIT').length;
+  const calcs=names.map(n=>calc(n,cur));
+  const fact=calcs.reduce((s,c)=>s+c.total,0),pendC=calcs.filter(c=>c.toPay>0),pend=pendC.reduce((s,c)=>s+c.toPay,0);
+  const noRate=calcs.filter(c=>!c.r.fixed_fee_cents&&!c.r.fijo_day_cents&&!c.r.extra_cents).map(c=>c.name);
+  const cards=calcs.map(c=>`<div class="card client"><div class="nm"><span><span class="pdot" style="background:${pcol(c.name)}"></span>${esc(c.name)}</span><span class="tag ${c.toPay?'warn':'good'}" style="margin:0">${c.toPay?'Pendiente':'Pagado'}</span></div>
+    <div class="mini3"><div title="Días fijos reservados de los que le tocan este mes"><span class="lbl">Fijos</span><b>${c.booked}/${c.due}</b></div><div><span class="lbl">Extra</span><b>${c.extraDays}</b></div><div><span class="lbl">Horas</span><b>${c.mine.reduce((s,b)=>s+H(b),0)}</b></div>${(()=>{const x=faltasOf(c.name,cur);return `<div class="${x?'bad':''}" title="Reservas marcadas como falta y días fijos que no reservó"><span class="lbl">Faltas</span><b>${x}</b></div>`;})()}</div>
+    <div class="ln" style="margin-top:8px"><span>${c.r.fixed_mode==='dia'?`Días fijos (${c.chargedDays} × ${eur(c.r.fijo_day_cents)})`:'Cuota fija'}</span><b>${eur(c.fixedCharge)}</b></div>
+    ${c.unbooked?`<div class="ln"><span style="color:var(--dim)">${c.unbooked} ${c.unbooked===1?'día fijo':'días fijos'} sin reservar (se cobran igual)</span><b></b></div>`:''}
+    ${c.pending?`<div class="ln"><span style="color:var(--dim)">${c.pending} ${c.pending===1?'día fijo':'días fijos'} por reservar este mes</span><b></b></div>`:''}
     <div class="ln"><span>Extras (${c.units} × ${eur(c.r.extra_cents)})</span><b>${eur(c.extraTotal)}</b></div>
-    <div class="tot">${eur(c.total)} <span class="sub" style="font-size:12px;font-weight:400">con IVA · base ${eur(c.base)}</span></div>
-    <div class="acts"><button class="btn sm" data-rec="${n}">Ver recibo</button><button class="btn sm ghost" data-paid="${n}">${c.paid?'Marcar pendiente':'Marcar pagado'}</button><button class="btn sm ghost" data-rate="${n}">Tarifa</button></div></div>`;}).join('');
-  return header('Recibos','El recibo mensual de cada cliente, con su calendario de días. Listo para enviar por WhatsApp.',monthPill())+`<div class="clients">${cards}</div>
-  <div class="sub" style="margin-top:14px">Primero configura la <b>Tarifa</b> de cada cliente (cuota fija, precio de extras y su WhatsApp). Las reservas con token "fijo" cuentan como días fijos; el resto, como extra.</div>`;
+    ${c.prevTotal?`<div class="ln"><span>Pendiente de ${c.prev.map(p=>p.label.toLowerCase()).join(', ')}</span><b>${eur(c.prevTotal)}</b></div>`:''}
+    <div class="tot">${eur(c.toPay)}<span>${c.prevTotal?'a pagar en total':c.r.vat_rate?'IVA incl. · base '+eur(c.base):'a pagar'}</span></div>
+    <div class="acts"><button class="btn sm" data-rec="${esc(c.name)}">Ver recibo</button><button class="btn sm ghost" data-paid="${esc(c.name)}">${c.paid&&!c.prevTotal?'Marcar pendiente':c.prevTotal?'Marcar todo pagado':'Marcar pagado'}</button><button class="btn sm ghost" data-rate="${esc(c.name)}">Tarifa</button></div></div>`).join('');
+  /* calendario del mes */
+  const y=cur.getFullYear(),m=cur.getMonth(),dim=new Date(y,m+1,0).getDate(),off=(new Date(y,m,1).getDay()+6)%7,today=isoD(new Date());
+  let cal=['L','M','X','J','V','S','D'].map(l=>`<div class="h">${l}</div>`).join('')+'<div class="d o"></div>'.repeat(off);
+  for(let d=1;d<=dim;d++){const di=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const chips=inM.filter(b=>b.date===di).map(b=>{const w=whoB(b),s=bStatus(b);const cls=s==='falta'?'x':(w==='INNIT'||b.token_type==='fijo')?'':'ex';
+      return `<span class="chip ${cls}" style="--c:${pcol(w)}" title="${esc(w)} · ${hh(b.start_hour)}–${hh(b.end_hour)} · ${esc(spName(b.space_id))}">${esc(w)} ${b.start_hour}–${b.end_hour}</span>`;}).join('');
+    cal+=`<div class="d ${di===today?'t':''}"><span class="n">${d}</span>${chips}</div>`;}
+  const rows=inM.length?`<table><thead><tr><th>Fecha</th><th>Quién</th><th class="hide-m">Sala</th><th>Horario</th><th class="hide-m">Tipo</th><th>Estado</th></tr></thead><tbody>`+inM.map(b=>{const d=new Date(+b.date.slice(0,4),+b.date.slice(5,7)-1,+b.date.slice(8,10)),s=bStatus(b),w=whoB(b);
+    return `<tr><td>${DAYS3[d.getDay()]} ${d.getDate()}</td><td><b><span class="pdot" style="background:${pcol(w)}"></span>${esc(w)}</b></td><td class="hide-m">${esc(spName(b.space_id))}</td><td class="num" style="text-align:left">${hh(b.start_hour)}–${hh(b.end_hour)}</td><td class="hide-m">${w==='INNIT'?'Equipo':b.token_type==='fijo'?'Fijo':'Extra'}</td><td><span class="tag ${s==='falta'?'bad':s==='hecha'?'good':'mute'}">${s==='falta'?'Falta':s==='hecha'?'Hecha':'Reservada'}</span></td></tr>`;}).join('')+'</tbody></table>':'<div class="empty">No hay reservas este mes.</div>';
+  return header('Reservas','Quién ha venido y quién viene este mes, y lo que toca cobrar a cada uno.',monthPill())+`
+  <div class="kpis">
+    <div class="card kpi hero"><div class="l">Facturación del mes</div><div class="v">${eur(fact)}</div><div class="n">Según las tarifas de cada uno</div></div>
+    <div class="card kpi"><div class="l">Pendiente de cobro</div><div class="v">${eur(pend)}</div><div class="n">${pendC.length?`${pendC.map(c=>esc(c.name)).join(' y ')}, incluye meses anteriores`:'Todo cobrado'}</div></div>
+    <div class="card kpi"><div class="l">Reservas</div><div class="v">${inM.length}</div><div class="n">${teamCount?`${teamCount} del equipo INNIT`:'Todas de clientes'}</div></div>
+    <div class="card kpi"><div class="l">Horas reservadas</div><div class="v">${hAll} h</div><div class="n">${hDone} h ya hechas</div></div>
+  </div>
+  ${noRate.length?`<div class="card" style="margin-top:12px"><div class="attn-item" style="padding:0"><div class="ic">!</div><div><div class="t">Falta la tarifa de ${noRate.map(esc).join(' y ')}</div><div class="s">Pulsa Tarifa en su tarjeta para que el recibo salga con importes.</div></div></div></div>`:''}
+  <div class="clients">${cards||'<div class="empty">Todavía no hay clientes.</div>'}</div>
+  <div class="card" style="margin-top:12px"><h2>Calendario de ${MONTHS[m].toLowerCase()}</h2><div class="mcal">${cal}</div>
+    <div class="keyrow">${[...names,'INNIT'].map(n=>`<span><span class="pdot" style="background:${pcol(n)}"></span>${esc(n)}</span>`).join('')}<span><span class="chip" style="--c:#8f8f8f">Relleno</span>día fijo</span><span><span class="chip ex" style="--c:#8f8f8f">Contorno</span>extra</span><span><span class="chip x">Tachado</span>falta</span></div></div>
+  <div class="card tbl"><h2>Todas las reservas <span class="lbl">${inM.length}</span></h2>${rows}</div>`;
 }
 function bindRec(){
   document.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>openRec(b.dataset.rec));
   document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>openRate(b.dataset.rate));
   document.querySelectorAll('[data-paid]').forEach(b=>b.onclick=async()=>{
-    const n=b.dataset.paid,mk=mkey(cur),cur_=rstat[n+'|'+mk],paid=!(cur_&&cur_.paid);
-    await sb.from('receipt_status').upsert({client_name:n,month:mk,paid,paid_at:paid?new Date().toISOString().slice(0,10):null});
+    const n=b.dataset.paid,mk=mkey(cur),cur_=rstat[n+'|'+mk],paid=!(cur_&&cur_.paid),today=new Date().toISOString().slice(0,10);
+    const rows=[{client_name:n,month:mk,paid,paid_at:paid?today:null}];
+    if(paid)calc(n,cur).prev.forEach(p=>rows.push({client_name:n,month:p.mk,paid:true,paid_at:today}));
+    await sb.from('receipt_status').upsert(rows);
     await loadRec();render();
   });
 }
@@ -507,20 +626,22 @@ function recHtml(c){
   <h4>Recibo mensual · ${esc(c.name)}</h4>
   <div class="rm">${MONTHS[cur.getMonth()]} ${cur.getFullYear()} · Ref. ${ref}</div>
   <div class="cal">${cells}</div>
-  <div class="lg"><span><i style="background:#0b0b0d"></i>Día fijo (${c.fijoDays})</span><span><i style="background:#2200ff"></i>Día extra (${c.extraDays})</span></div>
+  <div class="lg"><span><i style="background:${pcol(c.name)}"></i>Día fijo (${c.fijoDays})</span><span><i style="box-shadow:inset 0 0 0 2px ${pcol(c.name)}"></i>Día extra (${c.extraDays})</span></div>
   <table><thead><tr><th>Fecha</th><th>Espacio</th><th>Horario</th><th>Tipo</th></tr></thead><tbody>${rows}</tbody></table>
   <div class="sum">
-    <div><span>Cuota fija mensual</span><span>${eur(c.r.fixed_fee_cents)}</span></div>
+    ${c.r.fixed_mode==='dia'?`<div><span>Días fijos (${c.weeks} ${c.weeks===1?'semana':'semanas'} × ${c.weeks?c.due/c.weeks:0} = ${c.chargedDays} × ${eur(c.r.fijo_day_cents)})</span><span>${eur(c.fixedCharge)}</span></div>`:`<div><span>Cuota fija mensual</span><span>${eur(c.fixedCharge)}</span></div>`}
     <div><span>Extras (${c.units} ${c.r.extra_unit==='hora'?'h':'día'+(c.units===1?'':'s')} × ${eur(c.r.extra_cents)})</span><span>${eur(c.extraTotal)}</span></div>
-    <div><span>Base imponible</span><span>${eur(c.base)}</span></div>
-    <div><span>IVA ${c.r.vat_rate}%</span><span>${eur(c.vat)}</span></div>
-    <div class="t"><span>Total</span><span>${eur(c.total)}</span></div>
+    ${c.r.vat_rate?`<div><span>Base imponible</span><span>${eur(c.base)}</span></div><div><span>IVA ${c.r.vat_rate}%</span><span>${eur(c.vat)}</span></div>`:''}
+    <div class="t"><span>Total ${MONTHS[cur.getMonth()].toLowerCase()}</span><span>${eur(c.total)}</span></div>
+    ${c.prev.map(p=>`<div><span>Pendiente de ${p.label.toLowerCase()}</span><span>${eur(p.total)}</span></div>`).join('')}
+    ${c.prevTotal?`<div class="t"><span>Total a pagar</span><span>${eur(c.toPay)}</span></div>`:''}
   </div>
-  <span class="stt ${c.paid?'p':'n'}">${c.paid?'PAGADO':'PENDIENTE DE PAGO'}</span>
+  ${c.unbooked&&c.r.fixed_mode==='dia'?`<p style="font-size:11.5px;color:#6b6b76;margin-top:10px">Incluye ${c.unbooked} ${c.unbooked===1?'día fijo':'días fijos'} sin reservar: los días fijos se cobran igual aunque no se usen.</p>`:''}
+  <span class="stt ${c.toPay?'n':'p'}">${c.toPay?'PENDIENTE DE PAGO':'PAGADO'}</span>
   <div class="rf">Resumen mensual de uso del espacio. Documento informativo; no sustituye a una factura. Si algún día no es correcto, avísanos antes de pagar.</div>`;
 }
 function openRec(n){
-  recCtx=calc(n,cur);$('rec-doc').innerHTML=recHtml(recCtx);$('rc-err').textContent='';$('rec-scrim').classList.add('on');
+  recCtx=calc(n,cur);$('rec-doc').innerHTML=recHtml(recCtx);$('rec-doc').style.setProperty('--c',pcol(n));$('rc-err').textContent='';$('rec-scrim').classList.add('on');
 }
 $('rc-close').onclick=()=>$('rec-scrim').classList.remove('on');
 $('rec-scrim').addEventListener('click',e=>{if(e.target.id==='rec-scrim')$('rec-scrim').classList.remove('on');});
@@ -535,7 +656,7 @@ function dl(blob){const a=document.createElement('a');a.href=URL.createObjectURL
 $('rc-png').onclick=async()=>{try{dl(await recBlob());}catch(e){$('rc-err').textContent='No se pudo generar la imagen.';}};
 $('rc-wa').onclick=async()=>{
   const c=recCtx;$('rc-err').textContent='';
-  const msg=`Hola ${c.name}! Te paso tu recibo de ${MONTHS[cur.getMonth()]} ${cur.getFullYear()} de INNIT: ${c.fijoDays} día(s) fijo(s) y ${c.extraDays} extra. Total ${eur(c.total)} (IVA incl.). Cualquier duda, dime. 🙌`;
+  const msg=`Hola ${c.name}! Te paso tu recibo de ${MONTHS[cur.getMonth()]} ${cur.getFullYear()} de INNIT: ${c.booked} de ${c.due} días fijos reservados y ${c.extraDays} extra. ${c.prevTotal?`Total a pagar ${eur(c.toPay)} (incluye ${eur(c.prevTotal)} pendiente de antes)`:`Total ${eur(c.total)}`}${c.r.vat_rate?' (IVA incl.)':''}. Cualquier duda, dime. 🙌`;
   let phone=String(c.r.phone||'').replace(/\D/g,'');if(phone.length===9)phone='34'+phone;
   try{
     const blob=await recBlob();const file=new File([blob],fname(),{type:'image/png'});
@@ -551,13 +672,19 @@ function openRate(n){
   $('rt-fixed').value=r.fixed_fee_cents?(r.fixed_fee_cents/100).toString().replace('.',','):'';
   $('rt-extra').value=r.extra_cents?(r.extra_cents/100).toString().replace('.',','):'';
   $('rt-unit').value=r.extra_unit||'dia';$('rt-vat').value=r.vat_rate!=null?r.vat_rate:21;$('rt-phone').value=r.phone||'';
+  $('rt-mode').value=r.fixed_mode||'dia';$('rt-day').value=r.fijo_day_cents?(r.fijo_day_cents/100).toString().replace('.',','):'';
+  const uid=(profsAll.find(p=>p.name===n)||{}).id,g=goalsBy[uid];$('rt-start').value=g&&g.start_date||'';rtMode();
   $('rt-err').textContent='';$('rate-scrim').classList.add('on');
 }
+function rtMode(){const dia=$('rt-mode').value==='dia';$('rt-day-w').style.display=dia?'':'none';$('rt-fixed-w').style.display=dia?'none':'';}
+$('rt-mode').addEventListener('change',rtMode);
 $('rt-cancel').onclick=()=>$('rate-scrim').classList.remove('on');
 $('rt-save').onclick=async()=>{
-  const f=$('rt-fixed').value.trim()?toCents($('rt-fixed').value):0,x=$('rt-extra').value.trim()?toCents($('rt-extra').value):0;
-  if(!isFinite(f)||!isFinite(x)||f<0||x<0)return($('rt-err').textContent='Revisa los importes.');
-  const {error}=await sb.from('client_rates').upsert({client_name:rateFor,fixed_fee_cents:f,extra_cents:x,extra_unit:$('rt-unit').value,
+  const f=$('rt-fixed').value.trim()?toCents($('rt-fixed').value):0,x=$('rt-extra').value.trim()?toCents($('rt-extra').value):0,dd=$('rt-day').value.trim()?toCents($('rt-day').value):0;
+  if(!isFinite(f)||!isFinite(x)||!isFinite(dd)||f<0||x<0||dd<0)return($('rt-err').textContent='Revisa los importes.');
+  const uid=(profsAll.find(p=>p.name===rateFor)||{}).id;
+  if(uid){const g=await sb.from('member_goals').upsert({user_id:uid,start_date:$('rt-start').value||null});if(g.error)return($('rt-err').textContent=g.error.message);}
+  const {error}=await sb.from('client_rates').upsert({client_name:rateFor,fixed_mode:$('rt-mode').value,fijo_day_cents:dd,fixed_fee_cents:f,extra_cents:x,extra_unit:$('rt-unit').value,
     vat_rate:parseFloat(String($('rt-vat').value).replace(',','.'))||0,phone:$('rt-phone').value.trim()||null,updated_at:new Date().toISOString()});
   if(error)return($('rt-err').textContent=error.message);
   $('rate-scrim').classList.remove('on');await loadRec();render();
