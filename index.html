@@ -747,7 +747,7 @@ document.getElementById('access-btn').addEventListener('click', ()=>goTo('login'
 const SALAS = [
   {name:'La Oficina', floor:'p0', desc:'Zona de trabajo diario y reuniones con clientes.', look:'radial-gradient(circle at 45% 35%, #d8cdb8, #4a4030 75%)'},
   {name:'Búnker', floor:'p1', desc:'Sala insonorizada — grabación y producción de audio.', look:'radial-gradient(circle at 50% 45%, #6a7f99, #0b1420 75%)'},
-  {name:'Tattoo Zone', floor:'p1', desc:'Espacio para sesiones de tatuaje.', look:'radial-gradient(circle at 55% 40%, #d97a3f, #2a0f04 75%)'},
+  {name:'Downstairs', floor:'p1', desc:'Espacio abajo, versátil para sesiones, reuniones y creación.', look:'radial-gradient(circle at 55% 40%, #8a8f96, #121417 75%)'},
   {name:'Set Diáfano', floor:'p1', desc:'Set abierto y modulable para rodajes y fotografía.', look:'radial-gradient(circle at 50% 50%, #cfd6da, #202325 75%)'}
 ];
 
@@ -1033,7 +1033,11 @@ async function loadDomainData(){
     sb.from('bookings').select('*'),
     sb.from('profiles').select('*')
   ]);
-  spacesList = sp || [];
+  // Solo espacios activos y, si tienen lista de acceso, solo para quien esté en ella
+  spacesList = (sp || [])
+    .filter(x => x.active !== false)
+    .filter(x => !x.allowed || x.allowed.includes(session && session.name))
+    .sort((x,y) => (x.sort||0) - (y.sort||0));
   const nameOf = id => { const p=(profs||[]).find(x=>x.id===id); return p?p.name:'—'; };
   bookingsList = (bk||[]).map(b=>({...b, userName:nameOf(b.user_id)}));
   teamList = [];

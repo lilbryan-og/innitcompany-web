@@ -306,7 +306,7 @@ async function boot(){
   const {data:prof}=await sb.from('profiles').select('name').eq('id',session.user.id).single();
   if(!prof||prof.name!=='INNIT COMPANY'){
     $('login').style.display='none';$('app').style.display='block';
-    $('app').innerHTML='<div class="denied"><h1>Acceso restringido</h1><p class="sub">Esta área es solo para los socios de INNIT.</p><p style="margin-top:18px"><a href="index.html">← Volver a la web</a> · <a href="#" id="d-out">Cerrar sesión</a></p></div>';
+    $('app').innerHTML='<div class="denied"><h1>Estamos trabajando en ello.</h1><p class="sub">Esta parte todavía no está disponible. Tus reservas siguen en la web como siempre.</p><p style="margin-top:18px"><a href="index.html?acceso=1">← Mis reservas</a> · <a href="#" id="d-out">Cerrar sesión</a></p></div>';
     $('d-out').onclick=async e=>{e.preventDefault();await sb.auth.signOut();location.reload();};
     return;
   }
