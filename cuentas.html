@@ -155,6 +155,8 @@ td b{font-weight:600}
 .rec .sum{margin-top:18px;margin-left:auto;width:min(420px,100%);font-size:13px}
 .rec .sum div span:last-child{white-space:nowrap;padding-left:12px}
 .rec .sum div{display:flex;justify-content:space-between;padding:5px 0}
+.rec .sum div.pv{background:#fff4f2;margin:4px 0;padding:8px 10px;border-radius:8px;border-left:3px solid #e5484d}
+.rec .sum div.pv small{display:block;font-size:11px;color:#b4232a;margin-top:2px;font-weight:500}
 .rec .sum .t{border-top:2px solid #0b0b0d;margin-top:6px;padding-top:10px;font-size:18px;font-weight:800}
 .rec .stt{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:4px 10px;margin-top:14px}
 .rec .stt.p{background:#ececec;color:#111111}.rec .stt.n{background:#f3f3f3;color:#555555}
@@ -162,9 +164,16 @@ td b{font-weight:600}
 .scrim.big .modal{max-width:820px;overflow:hidden}
 .scrim.big .recscroll{overflow:auto;border-radius:14px;max-height:calc(92vh - 130px)}
 @media print{
-  body *{visibility:hidden}
-  #rec-doc,#rec-doc *{visibility:visible}
-  #rec-doc{position:absolute;left:0;top:0;width:100%}
+  @page{size:A4;margin:12mm}
+  html,body{background:#fff!important;height:auto!important;overflow:visible!important}
+  body>*:not(#rec-scrim){display:none!important}
+  #rec-scrim{position:static!important;display:block!important;background:none!important;padding:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  #rec-scrim .modal{position:static!important;display:block!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;max-height:none!important;width:auto!important;transform:none!important;animation:none!important}
+  #rec-scrim .recscroll{overflow:visible!important;max-height:none!important;padding:0!important;background:none!important}
+  #rec-scrim .mfoot,#rc-err{display:none!important}
+  #rec-scrim,#rec-scrim .modal,#rec-scrim .recscroll{overflow:visible!important;margin:0!important;width:auto!important;max-width:none!important}
+  #rec-doc{box-sizing:border-box!important;width:auto!important;max-width:none!important;margin:0!important;padding:0 1mm!important;border-radius:0!important;box-shadow:none!important}
+  #rec-doc *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 /* login */
 .login{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
@@ -229,7 +238,7 @@ td b{font-weight:600}
     <h3>Nuevo movimiento</h3>
     <div class="f">
       <div><label>Tipo</label><select id="m-kind"><option value="gasto">Gasto (factura)</option><option value="ingreso">Ingreso</option><option value="liquidacion">Liquidación entre socios</option></select></div>
-      <div><label id="m-partner-l">Lo pagó</label><select id="m-partner"><option>BRYAN</option><option>LEANDRO</option></select></div>
+      <div><label id="m-partner-l">Lo pagó</label><select id="m-partner"><option>BRYAN</option><option>LEANDRO</option><option value="CAJA" id="m-caja-opt">CAJA INNIT</option></select></div>
       <div><label>Fecha</label><input id="m-date" type="date"></div>
       <div id="m-cat-w"><label>Categoría</label><select id="m-cat"></select></div>
       <div class="full"><label>Concepto</label><input id="m-concept" placeholder="Ej. Factura luz septiembre"></div>
@@ -289,13 +298,15 @@ const mkey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
 const KL={gasto:'Gasto',ingreso:'Ingreso',liquidacion:'Liquidación'};
 
 function positions(L){
-  let g=0,i=0;const c={BRYAN:0,LEANDRO:0},paid={BRYAN:0,LEANDRO:0};
+  /* Los ingresos "CAJA INNIT" entran en la caja de la empresa: cuentan como ingreso, pero no mueven el balance entre socios */
+  let g=0,i=0,caja=0;const c={BRYAN:0,LEANDRO:0},paid={BRYAN:0,LEANDRO:0};
   L.forEach(e=>{const o=e.partner==='BRYAN'?'LEANDRO':'BRYAN';
+    if(e.partner==='CAJA'){if(e.kind==='ingreso'){i+=e.base_cents;caja+=e.base_cents;}return;}
     if(e.kind==='gasto'){g+=e.base_cents;c[e.partner]+=e.base_cents;paid[e.partner]+=e.base_cents;}
     else if(e.kind==='ingreso'){i+=e.base_cents;c[e.partner]-=e.base_cents;}
     else{c[e.partner]+=e.base_cents;c[o]-=e.base_cents;}});
-  const net=g-i,half=net/2;
-  return{gastos:g,ingresos:i,net,paid,bal:{BRYAN:Math.round(c.BRYAN-half),LEANDRO:Math.round(c.LEANDRO-half)}};
+  const net=g-(i-caja),half=net/2;
+  return{gastos:g,ingresos:i,caja,net,paid,bal:{BRYAN:Math.round(c.BRYAN-half),LEANDRO:Math.round(c.LEANDRO-half)}};
 }
 const balText=b=>Math.abs(b.BRYAN)<1?'Cuentas a cero':(b.BRYAN>0?`LEANDRO debe a BRYAN ${eur(b.BRYAN)}`:`BRYAN debe a LEANDRO ${eur(-b.BRYAN)}`);
 
@@ -305,10 +316,8 @@ async function boot(){
   if(!session){showLogin();return;}
   const {data:prof}=await sb.from('profiles').select('name').eq('id',session.user.id).single();
   if(!prof||prof.name!=='INNIT COMPANY'){
-    $('login').style.display='none';$('app').style.display='block';
-    $('app').innerHTML='<div class="denied"><h1>Estamos trabajando en ello.</h1><p class="sub">Esta parte todavía no está disponible. Tus reservas siguen en la web como siempre.</p><p style="margin-top:18px"><a href="index.html?acceso=1">← Mis reservas</a> · <a href="#" id="d-out">Cerrar sesión</a></p></div>';
-    $('d-out').onclick=async e=>{e.preventDefault();await sb.auth.signOut();location.reload();};
-    return;
+    /* Solo INNIT. El resto va a la pantalla de "Estamos trabajando en ello" */
+    location.replace('espacio.html');return;
   }
   me=prof;$('who-n').textContent='INNIT COMPANY';
   $('login').style.display='none';$('app').style.display='flex';
@@ -345,7 +354,7 @@ function rowsHtml(rows,actions){
   rows.map(e=>{const s=e.kind==='ingreso'?'+':e.kind==='gasto'?'−':'⇄';const d=String(e.date);
     return `<tr><td>${d.slice(8,10)}/${d.slice(5,7)}/${d.slice(2,4)}</td>
     <td><b>${esc(e.concept)}</b><div class="sub" style="margin-top:2px;font-size:11px">${KL[e.kind]}${e.supplier?' · '+esc(e.supplier):''}</div></td>
-    <td class="hide-m">${esc(e.category||'—')}</td><td>${esc(e.partner)}</td>
+    <td class="hide-m">${esc(e.category||'—')}</td><td>${esc(e.partner==='CAJA'?'CAJA INNIT':e.partner)}</td>
     <td class="num"><b>${s} ${eur(e.base_cents)}</b></td><td class="num hide-m">${e.vat_cents?eur(e.vat_cents):'—'}</td>
     ${actions?`<td class="num row-actions">${e.invoice_path?`<button data-view="${e.id}">Factura</button>`:''}<button data-del="${e.id}">Borrar</button></td>`:''}</tr>`;}).join('')+'</tbody></table>';
 }
@@ -407,7 +416,7 @@ function vSocios(){
   const card=n=>`<div class="card"><div class="l" style="color:var(--dim);font-size:12px">${n}</div><div class="big-balance">${eur(A.paid[n])}</div><div class="sub">pagado en gastos · ${A.bal[n]>0?'le deben '+eur(A.bal[n]):A.bal[n]<0?'debe '+eur(-A.bal[n]):'al día'}</div></div>`;
   return header('Socios','Reparto 50/50 de gastos menos ingresos. El IVA no cuenta.','<button class="btn" id="new-btn">+ Nuevo movimiento</button>')+
   `<div class="card"><div class="l" style="color:var(--dim);font-size:12px">Balance actual</div><div class="big-balance">${balText(A.bal)}</div>
-    <div class="sub">Gastos ${eur(A.gastos)} − Ingresos ${eur(A.ingresos)} = coste neto ${eur(A.net)} (${eur(Math.round(A.net/2))} cada uno). Para saldar, registra una <b>Liquidación</b>: quién paga y cuánto.</div></div>
+    <div class="sub">${A.caja?`Caja INNIT: ${eur(A.caja)} de ingresos de la empresa (no entran en el reparto). `:''}Gastos ${eur(A.gastos)} − Ingresos de socios ${eur(A.ingresos-A.caja)} = coste neto ${eur(A.net)} (${eur(Math.round(A.net/2))} cada uno). Para saldar, registra una <b>Liquidación</b>: quién paga y cuánto.</div></div>
   <div class="partners">${card('BRYAN')}${card('LEANDRO')}</div>
   <div class="card tbl"><h2>Liquidaciones realizadas</h2>${rowsHtml(settle,true)}</div>`;
 }
@@ -448,6 +457,7 @@ $('m-cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join('');
 function updModal(){
   const k=$('m-kind').value,liq=k==='liquidacion';
   $('m-partner-l').textContent=k==='gasto'?'Lo pagó':k==='ingreso'?'Lo cobró':'Quién paga al otro';
+  $('m-caja-opt').hidden=$('m-caja-opt').disabled=k!=='ingreso';if(k!=='ingreso'&&$('m-partner').value==='CAJA')$('m-partner').value='BRYAN';
   ['m-cat-w','m-sup-w','m-vat-w','m-file-w'].forEach(id=>$(id).style.display=liq?'none':'');
   if(k==='ingreso')$('m-file-w').style.display='none';
   const b=toCents($('m-base').value),r=parseFloat(String($('m-vat').value).replace(',','.'))||0;
@@ -526,15 +536,24 @@ function calcBase(name,d){
   if(r.fixed_mode==='dia'){chargedDays=due;fixedCharge=chargedDays*r.fijo_day_cents;}
   else fixedCharge=active?r.fixed_fee_cents:0;
   const base=fixedCharge+extraTotal,vat=Math.round(base*r.vat_rate/100);
-  return{name,mk,mine,fijo,extra,fijoDays,extraDays,extraHours,units,extraTotal,base,vat,total:base+vat,r,
+  return{name,mk,mine,fijo,extra,fijoDays,extraDays,extraHours,units,extraTotal,base,vat,total:base+vat,r,weekList:weeks,fw,
     weeks:weeks.length,due,booked,unbooked,pending,chargedDays,fixedCharge,start,
     paid:!!(rstat[name+'|'+mk]&&rstat[name+'|'+mk].paid)};
+}
+/* Qué semanas son las que quedaron sin abonar (para que el recibo lo diga claro) */
+const MES3=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const dm=d=>d.getDate()+' '+MES3[d.getMonth()];
+function prevDetail(p){
+  if(p.r.fixed_mode!=='dia'||!p.weekList.length)return '';
+  const w=p.weekList.map(m=>{const e=new Date(m);e.setDate(e.getDate()+6);return 'semana del '+dm(m)+' al '+dm(e);});
+  const list=w.length>1?w.slice(0,-1).join(', ')+' y '+w[w.length-1]:w[0];
+  return list.charAt(0).toUpperCase()+list.slice(1)+': '+p.chargedDays+' '+(p.chargedDays===1?'día fijo':'días fijos')+' × '+eur(p.r.fijo_day_cents)+(p.extraTotal?' + extras':'')+', sin abonar';
 }
 /* Igual, más lo que quede sin pagar de meses anteriores */
 function calc(name,d){
   const c=calcBase(name,d),prev=[];
   if(c.start){for(let x=new Date(c.start.getFullYear(),c.start.getMonth(),1),n=0;x<new Date(d.getFullYear(),d.getMonth(),1)&&n<36;x=new Date(x.getFullYear(),x.getMonth()+1,1),n++){
-    const p=calcBase(name,x);if(!p.paid&&p.total>0)prev.push({mk:p.mk,label:MONTHS[x.getMonth()]+' '+x.getFullYear(),total:p.total});}}
+    const p=calcBase(name,x);if(!p.paid&&p.total>0)prev.push({mk:p.mk,label:MONTHS[x.getMonth()]+' '+x.getFullYear(),total:p.total,detail:prevDetail(p)});}}
   const prevTotal=prev.reduce((s,p)=>s+p.total,0);
   return Object.assign(c,{prev,prevTotal,toPay:(c.paid?0:c.total)+prevTotal});
 }
@@ -635,7 +654,7 @@ function recHtml(c){
     <div><span>Extras (${c.units} ${c.r.extra_unit==='hora'?'h':'día'+(c.units===1?'':'s')} × ${eur(c.r.extra_cents)})</span><span>${eur(c.extraTotal)}</span></div>
     ${c.r.vat_rate?`<div><span>Base imponible</span><span>${eur(c.base)}</span></div><div><span>IVA ${c.r.vat_rate}%</span><span>${eur(c.vat)}</span></div>`:''}
     <div class="t"><span>Total ${MONTHS[cur.getMonth()].toLowerCase()}</span><span>${eur(c.total)}</span></div>
-    ${c.prev.map(p=>`<div><span>Pendiente de ${p.label.toLowerCase()}</span><span>${eur(p.total)}</span></div>`).join('')}
+    ${c.prev.map(p=>`<div class="pv"><span>Pendiente de ${p.label.toLowerCase()}${p.detail?`<small>${esc(p.detail)}</small>`:''}</span><span>${eur(p.total)}</span></div>`).join('')}
     ${c.prevTotal?`<div class="t"><span>Total a pagar</span><span>${eur(c.toPay)}</span></div>`:''}
   </div>
   ${c.unbooked&&c.r.fixed_mode==='dia'?`<p style="font-size:11.5px;color:#6b6b76;margin-top:10px">Incluye ${c.unbooked} ${c.unbooked===1?'día fijo':'días fijos'} sin reservar: los días fijos se cobran igual aunque no se usen.</p>`:''}
@@ -658,7 +677,7 @@ function dl(blob){const a=document.createElement('a');a.href=URL.createObjectURL
 $('rc-png').onclick=async()=>{try{dl(await recBlob());}catch(e){$('rc-err').textContent='No se pudo generar la imagen.';}};
 $('rc-wa').onclick=async()=>{
   const c=recCtx;$('rc-err').textContent='';
-  const msg=`Hola ${c.name}! Te paso tu recibo de ${MONTHS[cur.getMonth()]} ${cur.getFullYear()} de INNIT: ${c.booked} de ${c.due} días fijos reservados y ${c.extraDays} extra. ${c.prevTotal?`Total a pagar ${eur(c.toPay)} (incluye ${eur(c.prevTotal)} pendiente de antes)`:`Total ${eur(c.total)}`}${c.r.vat_rate?' (IVA incl.)':''}. Cualquier duda, dime. 🙌`;
+  const msg=`Hola ${c.name}! Te paso tu recibo de ${MONTHS[cur.getMonth()]} ${cur.getFullYear()} de INNIT: ${c.booked} de ${c.due} días fijos reservados y ${c.extraDays} extra. ${c.prevTotal?`Total a pagar ${eur(c.toPay)} (incluye ${eur(c.prevTotal)} pendiente: ${c.prev.map(p=>p.detail?p.detail.toLowerCase().replace(/, sin abonar$/,''):p.label.toLowerCase()).join('; ')}, que no se abonó)`:`Total ${eur(c.total)}`}${c.r.vat_rate?' (IVA incl.)':''}. Cualquier duda, dime. 🙌`;
   let phone=String(c.r.phone||'').replace(/\D/g,'');if(phone.length===9)phone='34'+phone;
   try{
     const blob=await recBlob();const file=new File([blob],fname(),{type:'image/png'});
